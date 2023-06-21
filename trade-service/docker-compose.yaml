@@ -34,3 +34,7 @@ services:
       CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:9092'
       CONTROL_CENTER_REPLICATION_FACTOR: 1
       PORT: 9021
+
+# Linux or Mac
+# /etc/hosts
+# 127.0.0.1 host.docker.internal

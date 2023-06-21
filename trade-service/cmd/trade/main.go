@@ -30,7 +30,7 @@ func main() {
 	// kafka msg channel
 	go kafka.Consume(kafkaMsgChan) // thread 2
 
-	// recebe do canal do kafka, joga no input, processa joga no output e depois publica no kafka
+	// receive from kafka channel, send to input, process send to output, then publish to kafka
 	book := entity.NewBook(ordersIn, ordersOut, wg)
 	go book.Trade() // thread 3
 
@@ -39,34 +39,34 @@ func main() {
 			wg.Add(1)
 			fmt.Println("mensagem recebida: ", string(msg.Value))
 			tradeInput := dto.TradeInput{}
-			// json.Unmarshal -> transformar de json para meu objeto
-			// pega a messagem recebida do kafka e joga em tradeInput
+			// json.Unmarshal -> transform from json to object
+			// get the message received from kafka and throw it into tradeInput
 			err := json.Unmarshal(msg.Value, &tradeInput)
 			if err != nil {
 				panic(err)
 			}
-			// criando order
+			// creating order
 			order := transformer.TransformInput(tradeInput)
-			// jogando os dados de order no canal ordersIn (que está sendo lido por Book no método Trade)
+			// throwing the order data into the orders channel (which is being read by Book in the Trade method)
 			ordersIn <- order
 		}
 	}()
 
 	for res := range ordersOut {
-		// transformando em obj do tipo  *dto.OrderOutput
+		// transforming into an object of type*dto.OrderOutput
 		output := transformer.TransformOutput(res)
-		// tranformando em json
+		// transforming into json
 		outputJson, err := json.MarshalIndent(output, "", "  ")
-		fmt.Println("transação realizada: ", string(outputJson))
+		fmt.Println("transaction performed: ", string(outputJson))
 		if err != nil {
 			fmt.Println(err)
 		}
-		// publicando no kafka
+		// publishing in kafka
 		producer.Publish(outputJson, []byte("orders"), "output")
 	}
 }
 
-// Kafka messages (input topic)
+// kafka messages (input topic)
 
 // {
 //   "order_id": "1",
@@ -88,8 +88,8 @@ func main() {
 //   "order_type": "SELL"
 // }
 
-// transação de ordem de venda
-// transação realizada:  {
+// sales order transaction
+// transaction performed:  {
 //   "order_id": "1",
 //   "investor_id": "Mari",
 //   "asset_id": "asset1",
@@ -109,8 +109,8 @@ func main() {
 //   ]
 // }
 
-// transação de ordem de compra
-// transação realizada:  {
+// purchase order transaction
+// transaction performed:  {
 //   "order_id": "1",
 //   "investor_id": "Celia",
 //   "asset_id": "asset1",
