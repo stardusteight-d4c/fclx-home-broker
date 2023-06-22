@@ -32,7 +32,7 @@ Content-Type: application/json
   "shares": 10
 }
 ###
-POST http://localhost:3000/wallet/wallet1/orders
+POST http://localhost:3000/wallet/wallet1/order
 Content-Type: application/json
 
 {
@@ -42,7 +42,7 @@ Content-Type: application/json
   "type": "SELL"
 }
 ###
-POST http://localhost:3000/wallet/wallet2/orders
+POST http://localhost:3000/wallet/wallet2/order
 Content-Type: application/json
 
 {
@@ -52,9 +52,9 @@ Content-Type: application/json
   "type": "BUY"
 }
 ###
-GET http://localhost:3000/wallet/wallet1/orders
+GET http://localhost:3000/wallet/wallet1/order
 ###
-POST http://localhost:3000/wallet/wallet1/orders/execute
+POST http://localhost:3000/wallet/wallet1/order/execute
 Content-Type: application/json
 
 {

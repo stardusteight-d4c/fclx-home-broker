@@ -36,4 +36,4 @@ lerna-debug.log*
 
 .env
 # directory generate by mongodb cotainer
-data
+/data

@@ -11,7 +11,8 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "prisma-generate": "cd src/orm/prisma && npx prisma generate"
+    "prisma-generate": "cd src/@orm/prisma && npx prisma generate",
+    "prisma-studio": "cd src/@orm/prisma && npx prisma studio"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
