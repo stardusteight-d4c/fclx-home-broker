@@ -20,7 +20,8 @@ func main() {
 
 	kafkaMsgChan := make(chan *ckafka.Message)
 	configMap := &ckafka.ConfigMap{
-		"bootstrap.servers": "host.docker.internal:9094",
+		// network docker gateway ip + port
+		"bootstrap.servers": "172.18.0.1:9092",
 		"group.id":          "myGroup",
 		"auto.offset.reset": "latest",
 	}

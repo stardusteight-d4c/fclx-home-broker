@@ -2,7 +2,7 @@ POST http://localhost:3000/asset
 Content-Type: application/json
 
 {
-  "id": "asset2",
+  "id": "asset1",
   "symbol": "A1",
   "price": 100
 }
@@ -24,7 +24,7 @@ GET http://localhost:3000/wallet/wallet1/asset
 ###
 GET http://localhost:3000/wallet/wallet2/asset
 ###
-POST http://localhost:3000/wallet/wallet1/asset
+POST http://localhost:3000/wallet/wallet2/asset
 Content-Type: application/json
 
 {
@@ -58,7 +58,7 @@ POST http://localhost:3000/wallet/wallet1/order/execute
 Content-Type: application/json
 
 {
-  "order_id": "6490eeae9a0e7fbce01e1f0f",
+  "order_id": "64939d6aff37c9d746d42f1c",
   "status": "CLOSED",
   "related_investor_id": "xxxx",
   "broker_transaction_id": "xxxx",

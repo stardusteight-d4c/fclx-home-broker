@@ -1,6 +1,12 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["extendedWhereUnique"]
 }
+
+// PrismaClientInitializationError: Unable to require
+// (`/home/node/app/node_modules/.prisma/client/libquery_engine-debian-openssl-1.1.x.so.node`).
+// Prisma cannot find the required `libssl` system library in your system. 
+// Please install openssl and try again.
 
 datasource db {
   provider = "mongodb"
