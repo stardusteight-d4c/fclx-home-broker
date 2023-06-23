@@ -1,5 +1,5 @@
-GET http://localhost:8000/wallet/wallet1/asset
+GET http://localhost:3000/wallet/wallet1/asset
 ###
-GET http://localhost:8000/wallet/wallet1/order
+GET http://localhost:3000/wallet/wallet1/order
 ###
-POST http://localhost:8000/wallet/wallet1/order
+POST http://localhost:3000/wallet/wallet1/order

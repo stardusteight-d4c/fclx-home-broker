@@ -1,5 +1,10 @@
 import { Module } from "@nestjs/common";
 import { ClientsModule, Transport } from "@nestjs/microservices";
+import { MongooseModule } from "@nestjs/mongoose";
+import {
+  WalletAsset,
+  WalletAssetSchema,
+} from "src/@mongoose/wallet.asset.schema";
 import { WalletAssetController } from "src/controllers/wallet-asset.controller";
 import { WalletOrderController } from "src/controllers/wallet-order.controller";
 import { WalletController } from "src/controllers/wallet.controller";
@@ -16,12 +21,15 @@ import { WalletService } from "src/services/wallet.service";
         options: {
           client: {
             clientId: "orders",
-            brokers: ['172.18.0.1:9092'], // for internal docker network
-            // brokers: ["host.docker.internal:9094"], // special hostname that resolves 
+            brokers: ["172.18.0.1:9092"], // for internal docker network
+            // brokers: ["host.docker.internal:9094"], // special hostname that resolves
             // to the IP address of the host machine (host) when used inside a Docker container
           },
         },
       },
+    ]),
+    MongooseModule.forFeature([
+      { name: WalletAsset.name, schema: WalletAssetSchema },
     ]),
   ],
   controllers: [WalletController, WalletAssetController, WalletOrderController],

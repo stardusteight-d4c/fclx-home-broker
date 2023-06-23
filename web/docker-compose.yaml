@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    ports:
+      - 3001:3000
+    volumes:
+      - .:/home/node/app
+    networks:
+      - fcexperience
+
+networks:
+  fcexperience:
+    external: true
+    
+
+# /etc/hosts (Linux ou Mac)
+# 127.0.0.1 host.docker.internal
+  
+# C:\Windows\system32\drivers\etc\hosts (Windows)
+# 127.0.0.1 host.docker.internal

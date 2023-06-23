@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  MessageEvent,
+  Param,
+  Post,
+  Sse,
+} from "@nestjs/common";
+import { Observable, map } from "rxjs";
 import { WalletAssetService } from "src/services/wallet-asset.service";
 
 // Nested resources
@@ -20,5 +29,17 @@ export class WalletAssetController {
       wallet_id,
       ...body,
     });
+  }
+
+  @Sse("events")
+  async events(
+    @Param("wallet_id") wallet_id: string
+  ): Promise<Observable<MessageEvent>> {
+    return (await this.walletAssetService.subscribeEvents(wallet_id)).pipe(
+      map(({ data }) => ({
+        type: "wallet-asset-updated",
+        data,
+      }))
+    );
   }
 }

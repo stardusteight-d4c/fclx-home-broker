@@ -1,4 +1,7 @@
-import { isHomeBrokerClosed } from "../utils"
+"use client"
+
+import { fetcher, isHomeBrokerClosed } from "../utils"
+import useSWR from "swr"
 import {
   Table,
   TableBody,
@@ -9,21 +12,16 @@ import {
 } from "../components/flowbite-components"
 import Link from "next/link"
 
-async function getWalletAssets(wallet_id: string): Promise<WalletAsset[]> {
-  const response = await fetch(
-    `http://localhost:8000/wallet/${wallet_id}/asset`,
+export default function MyWallet(props: { wallet_id: string }) {
+  const { data: walletAssets, error } = useSWR<WalletAsset[]>(
+    `http://localhost:3001/api/wallet/${props.wallet_id}/asset`,
+    fetcher,
     {
-      // cache: 'no-store', não mentém cache da requisição
-      next: {
-        revalidate: isHomeBrokerClosed() ? 60 * 30 : 5,
-      },
+      fallbackData: [],
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
     }
   )
-  return response.json()
-}
-
-export default async function MyWallet(props: { wallet_id: string }) {
-  const walletAssets = await getWalletAssets(props.wallet_id)
 
   return (
     <Table className="bg-black">
@@ -36,7 +34,7 @@ export default async function MyWallet(props: { wallet_id: string }) {
         </TableHeadCell>
       </TableHead>
       <TableBody className="divide-y ">
-        {walletAssets.map((walletAsset, key) => (
+        {walletAssets?.map((walletAsset, key) => (
           <TableRow className="border-gray-700 bg-gray-800" key={key}>
             <TableCell className="whitespace-nowrap font-medium text-white">
               {walletAsset.Asset.id} ({walletAsset.Asset.symbol})
@@ -57,3 +55,5 @@ export default async function MyWallet(props: { wallet_id: string }) {
     </Table>
   )
 }
+
+
