@@ -6,9 +6,9 @@ export default async function HomePage({
   params: { wallet_id: string }
 }) {
   return (
-    <div className="bg-black h-screen text-white">
+    <main className="container mx-auto px-2">
       <h1>Meus investimentos</h1>
       <MyWallet wallet_id={params.wallet_id} />
-    </div>
+    </main>
   )
 }

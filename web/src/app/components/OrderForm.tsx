@@ -1,3 +1,4 @@
+import { Label, TextInput, Button } from "../components/flowbite-components"
 import { revalidateTag } from "next/cache"
 
 async function initTransaction(formData: FormData) {
@@ -7,9 +8,9 @@ async function initTransaction(formData: FormData) {
   const wallet_id = formData.get("wallet_id")
   const asset_id = formData.get("asset_id")
   const type = formData.get("type")
-  console.log(`http://localhost:8000/wallet/${wallet_id}/order`)
+  console.log(`http://localhost:8000/wallets/${wallet_id}/orders`)
   const response = await fetch(
-    `http://localhost:8000/wallet/${wallet_id}/order`,
+    `http://localhost:8000/wallets/${wallet_id}/orders`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -29,49 +30,55 @@ async function initTransaction(formData: FormData) {
       }),
     }
   )
-  // in MyOrders.tsx
   revalidateTag(`orders-wallet-${wallet_id}`)
   return await response.json()
 }
 
-export function OrderForm(props: { asset_id: string; wallet_id: string }) {
+export function OrderForm(props: {
+  asset_id: string
+  wallet_id: string
+  type: "BUY" | "SELL"
+}) {
   return (
     <div>
       <h1>Order Form</h1>
       <form action={initTransaction}>
-        <input
-          name="asset_id"
-          type="hidden"
-          className="hidden"
-          defaultValue={props.asset_id}
-        />
-        <input
-          name="wallet_id"
-          type="hidden"
-          className="hidden"
-          defaultValue={props.wallet_id}
-        />
-        <input
-          name="type"
-          type="hidden"
-          className="hidden"
-          defaultValue={`BUY`}
-        />
-        <input
-          name="shares"
-          type="number"
-          min={1}
-          step={1}
-          placeholder="quantity"
-        />
-        <input
-          name="price"
-          type="number"
-          min={1}
-          step={0.1}
-          placeholder="price"
-        />
-        <button>Buy</button>
+        <input name="asset_id" type="hidden" defaultValue={props.asset_id} />
+        <input name="wallet_id" type="hidden" defaultValue={props.wallet_id} />
+        <input name="type" type="hidden" defaultValue={"BUY"} />
+        <div>
+          <div className="mb-2 block">
+            <Label htmlFor="shares" value="Quantidade" />
+          </div>
+          <TextInput
+            id="shares"
+            name="shares"
+            required
+            type="number"
+            min={1}
+            step={1}
+            defaultValue={1}
+          />
+        </div>
+        <br />
+        <div>
+          <div className="mb-2 block">
+            <Label htmlFor="shares" value="Preço R$" />
+          </div>
+          <TextInput
+            id="price"
+            name="price"
+            required
+            type="number"
+            min={1}
+            step={1}
+            defaultValue={1}
+          />
+        </div>
+        <br />
+        <Button type="submit" color={props.type === "BUY" ? "green" : "red"}>
+          Confirmar {props.type === "BUY" ? "compra" : "venda"}
+        </Button>
       </form>
     </div>
   )
