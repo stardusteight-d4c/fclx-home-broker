@@ -23,29 +23,37 @@ export class AssetService {
     return this.prismaService.asset.findMany();
   }
 
-  subscribeEvents(): Observable<{ event: 'asset-price-changed'; data: Asset }> {
+  findOne(id: string) {
+    return this.prismaService.asset.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+  subscribeEvents(): Observable<{ event: "asset-price-changed"; data: Asset }> {
     return new Observable((observer) => {
       this.assetModel
         .watch(
           [
             {
               $match: {
-                operationType: 'update',
+                operationType: "update",
               },
             },
           ],
           {
-            fullDocument: 'updateLookup',
-          },
+            fullDocument: "updateLookup",
+          }
         )
-        .on('change', async (data) => {
+        .on("change", async (data) => {
           console.log(data);
           const asset = await this.prismaService.asset.findUnique({
             where: {
-              id: data.fullDocument._id + '',
+              id: data.fullDocument._id + "",
             },
           });
-          observer.next({ event: 'asset-price-changed', data: asset });
+          observer.next({ event: "asset-price-changed", data: asset });
         });
     });
   }

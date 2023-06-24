@@ -29,12 +29,13 @@ import { WalletService } from "src/services/wallet.service";
         },
       },
     ]),
-    MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
     MongooseModule.forFeature([
       { name: WalletAsset.name, schema: WalletAssetSchema },
+      { name: Order.name, schema: OrderSchema },
     ]),
   ],
   controllers: [WalletController, WalletAssetController, WalletOrderController],
   providers: [WalletService, WalletAssetService, WalletOrderService],
+  exports: [WalletService, WalletAssetService, WalletOrderService],
 })
 export class WalletModule {}

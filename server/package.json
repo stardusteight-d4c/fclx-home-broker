@@ -12,7 +12,8 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "prisma-generate": "cd src/@orm/prisma && npx prisma generate",
-    "prisma-studio": "cd src/@orm/prisma && npx prisma studio"
+    "prisma-studio": "cd src/@orm/prisma && npx prisma studio",
+    "command": "npm run start -- --entryFile command --"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -26,6 +27,7 @@
     "@types/mongoose": "^5.11.97",
     "kafkajs": "^2.2.4",
     "mongoose": "^7.3.1",
+    "nest-commander": "^3.10.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },

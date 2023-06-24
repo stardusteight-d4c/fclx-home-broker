@@ -100,6 +100,13 @@ export class WalletOrderService {
             price: input.price,
           },
         });
+        await this.prismaService.assetDaily.create({
+          data: {
+            asset_id: order.asset_id,
+            date: new Date(),
+            price: input.price,
+          },
+        });
         const walletAsset = await prisma.walletAsset.findUnique({
           where: {
             wallet_id_asset_id: {

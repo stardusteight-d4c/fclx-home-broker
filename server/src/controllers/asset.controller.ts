@@ -1,4 +1,4 @@
-import { Body, Controller, Get, MessageEvent, Post, Sse } from "@nestjs/common";
+import { Body, Controller, Get, MessageEvent, Param, Post, Sse } from "@nestjs/common";
 import { AssetService } from "../services/asset.service";
 import { Observable, map } from "rxjs";
 
@@ -14,6 +14,11 @@ export class AssetController {
   @Get()
   async all() {
     return await this.assetService.all();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.assetService.findOne(id);
   }
 
   @Sse("events")

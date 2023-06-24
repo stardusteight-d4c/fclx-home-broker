@@ -1,4 +1,4 @@
-import { ChartComponent } from "@/app/components/ChartComponent"
+import { Chart } from "@/app/components/Chart"
 import {
   TabsGroup,
   TabsItem,
@@ -57,13 +57,15 @@ export default async function HomeBrokerPage({
             >
               {/* Client component, recebendo um server component como filho */}
               <SyncOrders wallet_id={params.wallet_id}>
-                <MyOrders wallet_id={params.wallet_id} />
+                <div className="max-h-96 overflow-y-auto overflow-hidden">
+                  <MyOrders wallet_id={params.wallet_id} />
+                </div>
               </SyncOrders>
             </Card>
           </div>
         </div>
         <div className="col-span-3 flex flex-grow">
-          <ChartComponent header="Asset 1 - R$ 100" />
+          <Chart header="Asset 1 - R$ 100" />
         </div>
       </div>
     </main>

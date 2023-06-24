@@ -25,3 +25,10 @@ type Order = {
   status: "PENDING" | "OPEN" | "CLOSED" | "FAILED"
   Asset: Pick<Asset, "id" | "symbol">
 }
+
+type AssetDaily = {
+  id: string
+  asset_id: string
+  date: string
+  price: number
+}
