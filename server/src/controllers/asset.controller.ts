@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Get, MessageEvent, Post, Sse } from "@nestjs/common";
 import { AssetService } from "../services/asset.service";
+import { Observable, map } from "rxjs";
 
 @Controller("asset")
 export class AssetController {
@@ -13,5 +14,15 @@ export class AssetController {
   @Get()
   async all() {
     return await this.assetService.all();
+  }
+
+  @Sse("events")
+  events(): Observable<MessageEvent> {
+    return this.assetService.subscribeEvents().pipe(
+      map((event) => ({
+        type: event.event,
+        data: event.data,
+      }))
+    );
   }
 }

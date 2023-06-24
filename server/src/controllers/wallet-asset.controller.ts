@@ -36,9 +36,9 @@ export class WalletAssetController {
     @Param("wallet_id") wallet_id: string
   ): Promise<Observable<MessageEvent>> {
     return (await this.walletAssetService.subscribeEvents(wallet_id)).pipe(
-      map(({ data }) => ({
-        type: "wallet-asset-updated",
-        data,
+      map((event) => ({
+        type: event.event,
+        data: event.data,
       }))
     );
   }

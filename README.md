@@ -2,6 +2,8 @@
 -> Microserviços
 -> Server sent events
 -> Watch do MongoDB
+-> Observable
+-> explicar componente SyncOrders
 
 quando você faz uma requisição via localhost dentro de um container,
 você está fazendo uma requisição no contexto daquele container

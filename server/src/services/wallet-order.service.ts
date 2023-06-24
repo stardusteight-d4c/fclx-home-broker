@@ -1,18 +1,23 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientKafka } from "@nestjs/microservices";
-import { OrderStatus, OrderType } from "@prisma/client";
+import { Order, OrderStatus, OrderType } from "@prisma/client";
+import { Observable } from "rxjs";
 import { PrismaService } from "src/@orm/prisma/prisma.service";
+import { Order as OrderSchema } from "../@mongoose/order.schema";
 import {
   InitTransactionDto,
   InputExecuteTransactionDto,
 } from "src/dtos/order.dto";
+import { Model } from "mongoose";
+import { InjectModel } from "@nestjs/mongoose";
 
 @Injectable()
 export class WalletOrderService {
   constructor(
     private prismaService: PrismaService,
     @Inject("ORDERS_PUBLISHER")
-    private readonly kafkaClient: ClientKafka
+    private readonly kafkaClient: ClientKafka,
+    @InjectModel(OrderSchema.name) private orderModel: Model<OrderSchema>
   ) {}
 
   async all(filter: { wallet_id: string }) {
@@ -131,6 +136,39 @@ export class WalletOrderService {
           });
         }
       }
+    });
+  }
+
+  subscribeEvents(
+    wallet_id: string
+  ): Observable<{ event: "order-created" | "order-updated"; data: Order }> {
+    return new Observable((observer) => {
+      this.orderModel
+        .watch(
+          [
+            {
+              $match: {
+                $or: [{ operationType: "insert" }, { operationType: "update" }],
+                "fullDocument.wallet_id": wallet_id,
+              },
+            },
+          ],
+          { fullDocument: "updateLookup" }
+        )
+        .on("change", async (data) => {
+          const order = await this.prismaService.order.findUnique({
+            where: {
+              id: data.fullDocument._id + "",
+            },
+          });
+          observer.next({
+            event:
+              data.operationType === "insert"
+                ? "order-created"
+                : "order-updated",
+            data: order,
+          });
+        });
     });
   }
 }

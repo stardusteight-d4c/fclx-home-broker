@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { MongooseModule } from "@nestjs/mongoose";
+import { Order, OrderSchema } from "src/@mongoose/order.schema";
 import {
   WalletAsset,
   WalletAssetSchema,
@@ -28,6 +29,7 @@ import { WalletService } from "src/services/wallet.service";
         },
       },
     ]),
+    MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
     MongooseModule.forFeature([
       { name: WalletAsset.name, schema: WalletAssetSchema },
     ]),

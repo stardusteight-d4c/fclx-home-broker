@@ -1,21 +1,22 @@
-import { ChartComponent } from "@/app/components/ChartComponent";
+import { ChartComponent } from "@/app/components/ChartComponent"
 import {
   TabsGroup,
   TabsItem,
   Card,
-} from "../../../components/flowbite-components";
-import MyOrders from "../../../components/MyOrders";
-import { OrderForm } from "../../../components/OrderForm";
-import { HiShoppingCart, HiArrowUp } from "../../../components/react-icons/hi";
+} from "../../../components/flowbite-components"
+import MyOrders from "../../../components/MyOrders"
+import { OrderForm } from "../../../components/OrderForm"
+import { HiShoppingCart, HiArrowUp } from "../../../components/react-icons/hi"
+import { SyncOrders } from "@/app/components/SyncOrders"
 
 export default async function HomeBrokerPage({
   params,
 }: {
-  params: { wallet_id: string; asset_id: string };
+  params: { wallet_id: string; asset_id: string }
 }) {
   return (
     <main className="flex flex-grow flex-col container mx-auto p-2">
-        <h1>Home broker - {params.asset_id}</h1>
+      <h1>Home broker - {params.asset_id}</h1>
       <div className="grid grid-cols-5 flex-grow gap-2 mt-2">
         <div className="col-span-2">
           <div>
@@ -54,7 +55,10 @@ export default async function HomeBrokerPage({
                 },
               }}
             >
-              <MyOrders wallet_id={params.wallet_id} />
+              {/* Client component, recebendo um server component como filho */}
+              <SyncOrders wallet_id={params.wallet_id}>
+                <MyOrders wallet_id={params.wallet_id} />
+              </SyncOrders>
             </Card>
           </div>
         </div>
@@ -63,5 +67,5 @@ export default async function HomeBrokerPage({
         </div>
       </div>
     </main>
-  );
+  )
 }
