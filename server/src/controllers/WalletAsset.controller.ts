@@ -8,7 +8,7 @@ import {
   Sse,
 } from "@nestjs/common";
 import { Observable, map } from "rxjs";
-import { WalletAssetService } from "src/services/wallet-asset.service";
+import { WalletAssetService } from "src/services/WalletAsset.service";
 
 // Nested resources
 @Controller("wallet/:wallet_id/asset")

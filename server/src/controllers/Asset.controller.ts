@@ -1,5 +1,5 @@
 import { Body, Controller, Get, MessageEvent, Param, Post, Sse } from "@nestjs/common";
-import { AssetService } from "../services/asset.service";
+import { AssetService } from "../services/Asset.service";
 import { Observable, map } from "rxjs";
 
 @Controller("asset")

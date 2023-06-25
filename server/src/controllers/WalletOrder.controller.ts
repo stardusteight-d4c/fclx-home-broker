@@ -13,7 +13,7 @@ import {
   InitTransactionDto,
   InputExecuteTransactionDto,
 } from "src/dtos/order.dto";
-import { WalletOrderService } from "src/services/wallet-order.service";
+import { WalletOrderService } from "src/services/WalletOrder.service";
 
 type ExecuteTransactionMessage = {
   order_id: string;

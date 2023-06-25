@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Observable } from "rxjs";
 import { Asset } from "@prisma/client";
-import { Asset as AssetSchema } from "../@mongoose/asset.schema";
+import { Asset as AssetSchema } from "../@mongoose/Asset.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { PrismaService } from "src/@orm/prisma/prisma.service";

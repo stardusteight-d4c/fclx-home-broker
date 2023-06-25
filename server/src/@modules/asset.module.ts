@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
-import { AssetController } from "../controllers/asset.controller";
-import { AssetService } from "../services/asset.service";
 import { MongooseModule } from "@nestjs/mongoose";
-import { Asset, AssetSchema } from "src/@mongoose/asset.schema";
-import { AssetDaily, AssetDailySchema } from "src/@mongoose/asset-daily.schema";
-import { AssetDailyService } from "src/services/asset-daily.service";
-import { AssetDailyController } from "src/controllers/assets-daily.controller";
+import { Asset, AssetSchema } from "src/@mongoose/Asset.schema";
+import { AssetDailyService } from "src/services/AssetDaily.service";
+import { AssetDailyController } from "src/controllers/AssetsDaily.controller";
+import { AssetDaily, AssetDailySchema } from "src/@mongoose/AssetDaily.schema";
+import { AssetController } from "../controllers/Asset.controller";
+import { AssetService } from "../services/Asset.service";
 
 @Module({
   imports: [

@@ -1,8 +1,8 @@
 import { Command, CommandRunner } from "nest-commander";
-import { AssetService } from "./services/asset.service";
-import { WalletService } from "./services/wallet.service";
-import { WalletAssetService } from "./services/wallet-asset.service";
-import { WalletOrderService } from "./services/wallet-order.service";
+import { AssetService } from "./services/Asset.service";
+import { WalletService } from "./services/Wallet.service";
+import { WalletAssetService } from "./services/WalletAsset.service";
+import { WalletOrderService } from "./services/WalletOrder.service";
 import { PrismaService } from "./@orm/prisma/prisma.service";
 
 @Command({ name: "simulate-assets-price" })

@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Get,
   MessageEvent,
@@ -7,7 +6,7 @@ import {
   Sse,
 } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
-import { AssetDailyService } from 'src/services/asset-daily.service';
+import { AssetDailyService } from 'src/services/AssetDaily.service';
 
 @Controller('assets/:id/daily')
 export class AssetDailyController {

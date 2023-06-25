@@ -3,32 +3,28 @@ import { InjectModel } from "@nestjs/mongoose";
 import { WalletAsset } from "@prisma/client";
 import { Model } from "mongoose";
 import { Observable } from "rxjs";
-import { WalletAsset as WalletAssetSchema } from "src/@mongoose/wallet.asset.schema";
+import { WalletAsset as WalletAssetSchema } from "src/@mongoose/WalletAsset.schema";
 import { PrismaService } from "src/@orm/prisma/prisma.service";
+import { WalletAssetHandler } from "./helpers/WalletAssetHandler";
 
 @Injectable()
 export class WalletAssetService {
+  #handler: WalletAssetHandler;
+
   constructor(
     private prismaService: PrismaService,
     @InjectModel(WalletAssetSchema.name)
     private walletAssetModel: Model<WalletAssetSchema>
-  ) {}
+  ) {
+    const handler = new WalletAssetHandler({ prismaService });
+    this.#handler = handler;
+  }
 
-  async all(filter: { wallet_id: string }) {
-    return await this.prismaService.walletAsset.findMany({
-      where: {
-        wallet_id: filter.wallet_id,
-      },
-      include: {
-        Asset: {
-          select: {
-            id: true,
-            symbol: true,
-            price: true,
-          },
-        },
-      },
-    });
+  public async findAllAssetsWallet(filter: { wallet_id: string }) {
+    return this.#handler
+      .findAllAssetsWallet(filter.wallet_id)
+      .then((assets) => assets)
+      .catch((err) => console.error(err));
   }
 
   async create(input: { wallet_id: string; asset_id: string; shares: number }) {

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ObjectId } from "bson";
 import { Observable } from "rxjs";
 import { AssetDaily } from "@prisma/client";
-import { AssetDaily as AssetDailySchema } from "../@mongoose/asset-daily.schema";
+import { AssetDaily as AssetDailySchema } from "../@mongoose/AssetDaily.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { PrismaService } from "src/@orm/prisma/prisma.service";
