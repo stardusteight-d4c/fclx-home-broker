@@ -3,18 +3,14 @@ import { Observable } from "rxjs";
 import { InjectModel } from "@nestjs/mongoose";
 import { ClientKafka } from "@nestjs/microservices";
 import { Inject, Injectable } from "@nestjs/common";
-import { Order, OrderStatus } from "@prisma/client";
+import { Order, OrderStatus, OrderType } from "@prisma/client";
 import { PrismaService } from "src/@orm/prisma/prisma.service";
-import { Order as OrderSchema } from "src/@mongoose/Order.schema";
-import {
-  InitTransactionDto,
-  InputExecuteTransactionDto,
-} from "src/dtos/order.dto";
+import { Order as OrderSchema } from "src/@mongoose/order.schema";
 import {
   fullDocumentUpdateLookup,
   getInsertAndUpdatePipeline,
 } from "./@helpers/data";
-import { OrderHandler } from "./@helpers/OrderHandler";
+import { OrderHandler } from "./@helpers/order.handler";
 
 @Injectable()
 export class OrderService {
@@ -37,7 +33,7 @@ export class OrderService {
         shares: input.shares,
         partial: input.shares,
         price: input.price,
-        type: input.type,
+        type: input.type as unknown as OrderType,
         status: OrderStatus.PENDING,
         version: 1,
       },
@@ -90,7 +86,7 @@ export class OrderService {
       });
   }
 
-  public subscribeEvents(
+  public subscribeOrderEvents(
     wallet_id: string
   ): Observable<{ event: "order-created" | "order-updated"; data: Order }> {
     return new Observable((observer) => {

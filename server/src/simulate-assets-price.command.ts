@@ -1,18 +1,16 @@
 import { Command, CommandRunner } from "nest-commander";
-import { WalletService } from "./services/wallet.service";
 import { PrismaService } from "./@orm/prisma/prisma.service";
+import { WalletService } from "./services/wallet.service";
 import { AssetService } from "./services/asset.service";
-import { WalletAssetService } from "./services/wallet/WalletAsset.service";
-import { WalletOrderService } from "./services/wallet/WalletOrder.service";
+import { OrderService } from "./services/order.service";
 
 @Command({ name: "simulate-assets-price" })
 export class SimulateAssetsPriceCommand extends CommandRunner {
   constructor(
+    private prismaService: PrismaService,
     private assetService: AssetService,
     private walletService: WalletService,
-    private walletAssetService: WalletAssetService,
-    private walletOrderService: WalletOrderService,
-    private prismaService: PrismaService
+    private orderService: OrderService
   ) {
     super();
   }
@@ -40,13 +38,13 @@ export class SimulateAssetsPriceCommand extends CommandRunner {
   }
 
   async createAssets() {
-    await this.assetService.create({
+    await this.assetService.createAsset({
       id: "asset1",
       price: 100,
       symbol: "asset1",
     });
     console.log("Asset 1 created");
-    await this.assetService.create({
+    await this.assetService.createAsset({
       id: "asset2",
       price: 200,
       symbol: "asset2",
@@ -55,31 +53,31 @@ export class SimulateAssetsPriceCommand extends CommandRunner {
   }
 
   async createWallets() {
-    await this.walletService.createWallet({wallet_id: "wallet1"});
+    await this.walletService.createWallet({ wallet_id: "wallet1" });
     console.log("Wallet 1 created");
-    await this.walletService.createWallet("wallet2");
+    await this.walletService.createWallet({ wallet_id: "wallet2" });
     console.log("Wallet 2 created");
   }
 
   async createWalletAssets() {
-    await this.walletAssetService.createWalletAsset({
+    await this.walletService.createWalletAsset({
       asset_id: "asset1",
       wallet_id: "wallet1",
       shares: 10000,
     });
-    await this.walletAssetService.create({
+    await this.walletService.createWalletAsset({
       asset_id: "asset2",
       wallet_id: "wallet1",
       shares: 20000,
     });
     console.log("Wallet 1 assets created");
 
-    await this.walletAssetService.create({
+    await this.walletService.createWalletAsset({
       asset_id: "asset1",
       wallet_id: "wallet2",
       shares: 5000,
     });
-    await this.walletAssetService.create({
+    await this.walletService.createWalletAsset({
       asset_id: "asset2",
       wallet_id: "wallet2",
       shares: 1000,
@@ -93,7 +91,7 @@ export class SimulateAssetsPriceCommand extends CommandRunner {
       Array.from({ length: end - start }, (_, i) => i + start);
 
     for (const index of range(1, 100)) {
-      await this.walletOrderService.initTransaction({
+      await this.orderService.initTransaction({
         asset_id: "asset1",
         wallet_id: "wallet1",
         price: 100 + index,
@@ -101,7 +99,7 @@ export class SimulateAssetsPriceCommand extends CommandRunner {
         type: "SELL",
       });
 
-      await this.walletOrderService.initTransaction({
+      await this.orderService.initTransaction({
         asset_id: "asset1",
         wallet_id: "wallet2",
         price: 100 + index + 10,
@@ -109,7 +107,7 @@ export class SimulateAssetsPriceCommand extends CommandRunner {
         type: "BUY",
       });
 
-      await this.walletOrderService.initTransaction({
+      await this.orderService.initTransaction({
         asset_id: "asset2",
         wallet_id: "wallet1",
         price: 200 + index,
@@ -117,7 +115,7 @@ export class SimulateAssetsPriceCommand extends CommandRunner {
         type: "SELL",
       });
 
-      await this.walletOrderService.initTransaction({
+      await this.orderService.initTransaction({
         asset_id: "asset2",
         wallet_id: "wallet2",
         price: 200 + index + 10,

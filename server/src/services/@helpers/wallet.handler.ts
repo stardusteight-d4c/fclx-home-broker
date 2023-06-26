@@ -9,7 +9,7 @@ export class WalletHandler {
     this.#prismaService = implementations.prismaService;
   }
 
-  public async findAllAssetsWallet(wallet_id: string) {
+  public async findAllWalletAssets(wallet_id: string) {
     return await this.#prismaService.walletAsset.findMany({
       where: {
         wallet_id,

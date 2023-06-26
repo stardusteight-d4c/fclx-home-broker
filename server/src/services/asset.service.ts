@@ -5,15 +5,15 @@ import { AssetDaily } from "@prisma/client";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Asset } from "@prisma/client";
-import { Asset as AssetSchema } from "src/@mongoose/Asset.schema";
 import { PrismaService } from "src/@orm/prisma/prisma.service";
-import { AssetHandler } from "./@helpers/AssetHandler";
+import { AssetHandler } from "./@helpers/asset.handler";
 import {
   fullDocumentUpdateLookup,
   getInsertPipeline,
   updatePipeline,
 } from "./@helpers/data";
-import { AssetDaily as AssetDailySchema } from "../@mongoose/AssetDaily.schema";
+import { Asset as AssetSchema } from "src/@mongoose/asset.schema";
+import { AssetDaily as AssetDailySchema } from "../@mongoose/asset-daily.schema";
 
 @Injectable()
 export class AssetService {
@@ -51,22 +51,6 @@ export class AssetService {
     });
   }
 
-  public subscribeAssetPriceEvents(): Observable<{
-    event: "asset-price-changed";
-    data: Asset;
-  }> {
-    return new Observable((observer) => {
-      this.assetModel
-        .watch(updatePipeline, fullDocumentUpdateLookup)
-        .on("change", async (data) =>
-          this.#handler.handleAssetPriceChanged({
-            changedData: data,
-            observer,
-          })
-        );
-    });
-  }
-
   public async getAllAssetsDaily(
     assetIdOrSymbol: string
   ): Promise<AssetDaily[]> {
@@ -85,6 +69,22 @@ export class AssetService {
         console.error(err);
         return null;
       });
+  }
+
+  public subscribeAssetPriceEvents(): Observable<{
+    event: "asset-price-changed";
+    data: Asset;
+  }> {
+    return new Observable((observer) => {
+      this.assetModel
+        .watch(updatePipeline, fullDocumentUpdateLookup)
+        .on("change", async (data) =>
+          this.#handler.handleAssetPriceChanged({
+            changedData: data,
+            observer,
+          })
+        );
+    });
   }
 
   public subscribeAssetDailyEvents(asset_id: string): Observable<{

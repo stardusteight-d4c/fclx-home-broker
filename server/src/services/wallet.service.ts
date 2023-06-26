@@ -4,9 +4,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Wallet, WalletAsset } from "@prisma/client";
 import { PrismaService } from "src/@orm/prisma/prisma.service";
-import { CreateOrderDTO } from "src/dtos/order.dto";
-import { WalletAsset as WalletAssetSchema } from "src/@mongoose/WalletAsset.schema";
-import { WalletHandler } from "./@helpers/WalletHandler";
+import { WalletAsset as WalletAssetSchema } from "src/@mongoose/wallet-asset.schema";
+import { WalletHandler } from "./@helpers/wallet.handler";
 import { fullDocumentUpdateLookup, getUpdatePipeline } from "./@helpers/data";
 
 @Injectable()
@@ -30,11 +29,11 @@ export class WalletService {
       });
   }
 
-  public async createWallet(wallet_id: string): Promise<Wallet> {
+  public async createWallet(params: { wallet_id: string }): Promise<Wallet> {
     return this.prismaService.wallet
       .create({
         data: {
-          id: wallet_id,
+          id: params.wallet_id,
         },
       })
       .then((wallet) => wallet)
@@ -44,9 +43,9 @@ export class WalletService {
       });
   }
 
-  public async findAllAssetsWallet(wallet_id: string) {
+  public async getAllWalletAssets(params: { wallet_id: string }) {
     return this.#handler
-      .findAllAssetsWallet(wallet_id)
+      .findAllWalletAssets(params.wallet_id)
       .then((assets) => assets)
       .catch((err) => console.error(err));
   }
@@ -66,16 +65,14 @@ export class WalletService {
       });
   }
 
-  public async subscribeEvents(wallet_id: string): Promise<
-    Observable<{
-      event: "wallet-asset-updated";
-      data: WalletAsset;
-    }>
-  > {
+  public subscribeWalletAssetEvents(wallet_id: string): Observable<{
+    event: "wallet-asset-updated";
+    data: WalletAsset;
+  }> {
     return new Observable((observer) => {
       this.walletAssetModel
         .watch(getUpdatePipeline(wallet_id), fullDocumentUpdateLookup)
-        .on("change", async (data) =>
+        .on("change", (data) =>
           this.#handler.handleWalletAssetChanged({
             changedData: data,
             observer,

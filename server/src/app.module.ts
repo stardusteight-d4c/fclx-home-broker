@@ -4,6 +4,7 @@ import { AssetModule } from "./@modules/asset.module";
 import { WalletModule } from "./@modules/wallet.module";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ConfigModule } from "@nestjs/config";
+import { OrderModule } from "./@modules/order.module";
 import { SimulateAssetsPriceCommand } from "./simulate-assets-price.command";
 
 @Module({
@@ -12,6 +13,7 @@ import { SimulateAssetsPriceCommand } from "./simulate-assets-price.command";
     PrismaModule,
     AssetModule,
     WalletModule,
+    OrderModule,
     MongooseModule.forRoot(process.env.DATABASE_URL),
   ],
   controllers: [],

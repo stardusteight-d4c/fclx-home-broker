@@ -1,7 +1,6 @@
 import { Subscriber } from "rxjs";
 import { Order, OrderType } from "@prisma/client";
 import { PrismaService } from "src/@orm/prisma/prisma.service";
-import { InputExecuteTransactionDto } from "src/dtos/order.dto";
 
 export class OrderHandler {
   #prismaService: PrismaService;
