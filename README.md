@@ -23,6 +23,19 @@ Também comentar o processo
 Obs.: Isso só é aplicado para códigos via backend/server caso seja uma requisição 
 executada no browser não terá efeito
 
+// executando npm run prisma-generate e rodando o servidor com npm run start:dev 
+// dentro do container app, estava recebendo o erro:
+
+// PrismaClientInitializationError: Unable to require
+// (`/home/node/app/node_modules/.prisma/client/libquery_engine-debian-openssl-1.1.x.so.node`).
+// Prisma cannot find the required `libssl` system library in your system. 
+// Please install openssl and try again.
+
+<!-- talvez seja necessario excluir a diretório dist -->
+
+// SET -> binaryTargets = ["native", "debian-openssl-1.1.x"]
+// In generator client {}
+
 // server sent events -> servidor enviar eventos para o browser (http)
 // websockets -> servidor enviar eventos para o browser (ws)
 
@@ -56,3 +69,34 @@ Uma ordem de compra, muitas vezes abreviada para PO (Purchase Order), é um docu
 ## Wallet
 
 A carteira de investimentos é uma união de todas as aplicações que você escolheu para fazer seu dinheiro render. 
+
+
+
+// PING command para verificar se um endereço está ativo
+
+ ping 172.18.0.3:27017
+
+ O comando `ping` é utilizado para enviar pacotes ICMP e verificar a conectividade com um endereço IP. No seu exemplo, você executou o comando `ping 172.18.0.1` e recebeu respostas dos pacotes enviados, o que indica que o endereço IP 172.18.0.1 está ativo e respondendo aos pacotes ICMP.
+
+No entanto, o comando `ping` não suporta especificar uma porta diretamente. O formato correto para utilizar o `ping` é apenas com o endereço IP ou nome de domínio, sem especificar uma porta.
+
+Para verificar se uma porta específica está aberta e acessível em um determinado endereço IP, você pode usar outras ferramentas, como o `telnet` ou utilitários de verificação de porta, como o `nmap`.
+
+Exemplo de uso do `telnet` para verificar uma porta:
+
+```shell
+telnet <endereço IP> <porta>
+```
+
+Por exemplo, para verificar se a porta 27017 está acessível no endereço IP 172.18.0.1, você pode executar o seguinte comando:
+
+```shell
+telnet 172.18.0.1 27017
+```
+
+Se a porta estiver aberta e acessível, você verá uma mensagem de sucesso ou uma resposta adequada do serviço ou aplicação que estiver sendo executada nessa porta. Caso contrário, você receberá uma mensagem de erro ou o comando ficará aguardando a conexão por um período de tempo e, eventualmente, expirará.
+
+Certifique-se de usar o formato correto ao utilizar comandos como `ping` e `telnet` para verificar a conectividade e a abertura de portas em um endereço IP específico.
+
+fixing Unable to connect to the database. Retrying
+with directConnection=true
