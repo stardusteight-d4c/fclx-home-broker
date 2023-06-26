@@ -42,3 +42,17 @@ header: Cache-Control: no-cache
 // to the IP address of the host machine (host) when used inside a Docker container
 
 A função handleWalletAssetChanged é responsável por lidar com a mudança nos ativos de carteira e notificar o observer com os dados atualizados. Aqui está uma descrição passo a passo do que a função faz:
+
+entendendo o dominio 
+
+## Order
+
+Uma ordem de compra, muitas vezes abreviada para PO (Purchase Order), é um documento comercial emitido por um comprador para um vendedor, indicando tipos, quantidades e preços acordados para produtos ou serviços necessários. É utilizado para controlar a compra de produtos e serviços de fornecedores externos
+
+## Asset
+
+É o conjunto de todos os investimentos, sejam eles feitos por pessoa física ou jurídica. Esses investimentos podem se valorizar com o passar do tempo e gerar rentabilidade sobre o capital investido no inicio.
+
+## Wallet
+
+A carteira de investimentos é uma união de todas as aplicações que você escolheu para fazer seu dinheiro render. 

@@ -1,7 +1,8 @@
 import { Model } from "mongoose";
 import { Observable } from "rxjs";
-import { Inject, Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
 import { ClientKafka } from "@nestjs/microservices";
+import { Inject, Injectable } from "@nestjs/common";
 import { Order, OrderStatus } from "@prisma/client";
 import { PrismaService } from "src/@orm/prisma/prisma.service";
 import { Order as OrderSchema } from "src/@mongoose/Order.schema";
@@ -9,16 +10,15 @@ import {
   InitTransactionDto,
   InputExecuteTransactionDto,
 } from "src/dtos/order.dto";
-import { InjectModel } from "@nestjs/mongoose";
 import {
   fullDocumentUpdateLookup,
   getInsertAndUpdatePipeline,
-} from "../@helpers/data";
-import { WalletHandler } from "../@helpers/WalletHandler";
+} from "./@helpers/data";
+import { OrderHandler } from "./@helpers/OrderHandler";
 
 @Injectable()
-export class WalletOrderService {
-  #handler: WalletHandler;
+export class OrderService {
+  #handler: OrderHandler;
 
   constructor(
     private prismaService: PrismaService,
@@ -26,7 +26,7 @@ export class WalletOrderService {
     private readonly kafkaClient: ClientKafka,
     @InjectModel(OrderSchema.name) private orderModel: Model<OrderSchema>
   ) {
-    this.#handler = new WalletHandler({ prismaService });
+    this.#handler = new OrderHandler({ prismaService });
   }
 
   private async createOrder(input: InitTransactionDto) {

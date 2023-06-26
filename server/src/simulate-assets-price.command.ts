@@ -1,7 +1,7 @@
 import { Command, CommandRunner } from "nest-commander";
-import { WalletService } from "./services/wallet/Wallet.service";
+import { WalletService } from "./services/wallet.service";
 import { PrismaService } from "./@orm/prisma/prisma.service";
-import { AssetService } from "./services/asset/Asset.service";
+import { AssetService } from "./services/asset.service";
 import { WalletAssetService } from "./services/wallet/WalletAsset.service";
 import { WalletOrderService } from "./services/wallet/WalletOrder.service";
 
@@ -55,7 +55,7 @@ export class SimulateAssetsPriceCommand extends CommandRunner {
   }
 
   async createWallets() {
-    await this.walletService.createWallet("wallet1");
+    await this.walletService.createWallet({wallet_id: "wallet1"});
     console.log("Wallet 1 created");
     await this.walletService.createWallet("wallet2");
     console.log("Wallet 2 created");

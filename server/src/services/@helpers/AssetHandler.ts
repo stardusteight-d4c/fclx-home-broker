@@ -1,5 +1,5 @@
-import { Asset, AssetDaily } from "@prisma/client";
 import { Subscriber } from "rxjs";
+import { Asset, AssetDaily } from "@prisma/client";
 import { PrismaService } from "src/@orm/prisma/prisma.service";
 
 export class AssetHandler {
