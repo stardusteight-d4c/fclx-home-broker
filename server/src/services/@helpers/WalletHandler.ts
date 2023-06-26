@@ -1,13 +1,48 @@
-import { Order, OrderType } from "@prisma/client";
+import { Order, OrderType, WalletAsset } from "@prisma/client";
 import { Subscriber } from "rxjs";
 import { PrismaService } from "src/@orm/prisma/prisma.service";
 import { InputExecuteTransactionDto } from "src/dtos/order.dto";
 
-export class WalletOrderHandler {
+export class WalletHandler {
   #prismaService: PrismaService;
 
   constructor(implementations: { prismaService: PrismaService }) {
     this.#prismaService = implementations.prismaService;
+  }
+
+  public async findAllAssetsWallet(wallet_id: string) {
+    return await this.#prismaService.walletAsset.findMany({
+      where: {
+        wallet_id,
+      },
+      include: {
+        Asset: {
+          select: {
+            id: true,
+            symbol: true,
+            price: true,
+          },
+        },
+      },
+    });
+  }
+
+  public async handleWalletAssetChanged(request: {
+    changedData: any,
+    observer: Subscriber<{
+      event: "wallet-asset-updated";
+      data: WalletAsset;
+    }>}
+  ) {
+    const walletAsset = await this.#prismaService.walletAsset.findUnique({
+      where: {
+        id: String(request.changedData.fullDocument._id),
+      },
+    });
+    request.observer.next({
+      event: "wallet-asset-updated",
+      data: walletAsset,
+    });
   }
 
   public async updateAsset(order: any, price: number) {
@@ -90,10 +125,10 @@ export class WalletOrderHandler {
     });
   }
 
-  public async findAllOrders(filter: { wallet_id: string }) {
+  public async findAllOrdersById(wallet_id: string) {
     return await this.#prismaService.order.findMany({
       where: {
-        wallet_id: filter.wallet_id,
+        wallet_id,
       },
       include: {
         Transactions: true,
@@ -110,8 +145,8 @@ export class WalletOrderHandler {
     });
   }
 
-  public async handleOrderChange(request: {
-    data: any;
+  public async handleOrderChanged(request: {
+    changedData: any;
     observer: Subscriber<{
       event: "order-created" | "order-updated";
       data: Order;
@@ -119,12 +154,12 @@ export class WalletOrderHandler {
   }) {
     const order = await this.#prismaService.order.findUnique({
       where: {
-        id: request.data.fullDocument._id + "",
+        id: String(request.changedData.fullDocument._id),
       },
     });
     request.observer.next({
       event:
-        request.data.operationType === "insert"
+        request.changedData.operationType === "insert"
           ? "order-created"
           : "order-updated",
       data: order,

@@ -6,7 +6,7 @@ import {
   Sse,
 } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
-import { AssetDailyService } from 'src/services/AssetDaily.service';
+import { AssetDailyService } from 'src/services/asset/AssetDaily.service';
 
 @Controller('assets/:id/daily')
 export class AssetDailyController {

@@ -16,3 +16,11 @@ export class InputExecuteTransactionDto {
   negotiated_shares: number;
   price: number;
 }
+
+
+export type CreateOrderDTO = {
+  wallet_id: string;
+  asset_id: string;
+  shares: number;
+  version: number;
+};

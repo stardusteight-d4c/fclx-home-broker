@@ -39,7 +39,7 @@ export class WalletOrderController {
 
   @Get()
   async all(@Param("wallet_id") wallet_id: string) {
-    return this.walletOrderService.all({ wallet_id });
+    return this.walletOrderService.findAllOrders({ wallet_id });
   }
 
   @Post()

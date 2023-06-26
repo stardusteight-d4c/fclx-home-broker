@@ -1,21 +1,24 @@
+import { Model } from "mongoose";
+import { Observable } from "rxjs";
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientKafka } from "@nestjs/microservices";
 import { Order, OrderStatus } from "@prisma/client";
-import { Observable } from "rxjs";
 import { PrismaService } from "src/@orm/prisma/prisma.service";
-import { Order as OrderSchema } from "../@mongoose/Order.schema";
+import { Order as OrderSchema } from "src/@mongoose/Order.schema";
 import {
   InitTransactionDto,
   InputExecuteTransactionDto,
 } from "src/dtos/order.dto";
-import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
-import { WalletOrderHandler } from "./helpers/WalletOrderHandler";
-import { options, pipeline } from "./helpers/data";
+import {
+  fullDocumentUpdateLookup,
+  getInsertAndUpdatePipeline,
+} from "../@helpers/data";
+import { WalletHandler } from "../@helpers/WalletHandler";
 
 @Injectable()
 export class WalletOrderService {
-  #handler: WalletOrderHandler;
+  #handler: WalletHandler;
 
   constructor(
     private prismaService: PrismaService,
@@ -23,8 +26,7 @@ export class WalletOrderService {
     private readonly kafkaClient: ClientKafka,
     @InjectModel(OrderSchema.name) private orderModel: Model<OrderSchema>
   ) {
-    const handler = new WalletOrderHandler({ prismaService });
-    this.#handler = handler;
+    this.#handler = new WalletHandler({ prismaService });
   }
 
   private async createOrder(input: InitTransactionDto) {
@@ -54,9 +56,9 @@ export class WalletOrderService {
     });
   }
 
-  public async all(filter: { wallet_id: string }) {
+  public async findAllOrdersById(wallet_id: string) {
     return this.#handler
-      .findAllOrders(filter)
+      .findAllOrdersById(wallet_id)
       .then((orders) => orders)
       .catch((err) => console.error(err));
   }
@@ -91,24 +93,15 @@ export class WalletOrderService {
   public subscribeEvents(
     wallet_id: string
   ): Observable<{ event: "order-created" | "order-updated"; data: Order }> {
-    try {
-      return new Observable((observer) => {
-        const changeStream = this.orderModel.watch(
-          pipeline(wallet_id),
-          options
+    return new Observable((observer) => {
+      this.orderModel
+        .watch(getInsertAndUpdatePipeline(wallet_id), fullDocumentUpdateLookup)
+        .on("change", async (data) =>
+          this.#handler.handleOrderChanged({
+            changedData: data,
+            observer,
+          })
         );
-        changeStream.on("change", (data) =>
-          this.#handler.handleOrderChange({ data, observer })
-        );
-        return () => {
-          changeStream.removeListener("change", (data) =>
-            this.#handler.handleOrderChange({ data, observer })
-          );
-          changeStream.close();
-        };
-      });
-    } catch (err) {
-      console.error(err);
-    }
+    });
   }
 }

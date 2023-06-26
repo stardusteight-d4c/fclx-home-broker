@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Asset, AssetSchema } from "src/@mongoose/Asset.schema";
-import { AssetDailyService } from "src/services/AssetDaily.service";
+import { AssetDailyService } from "src/services/asset/AssetDaily.service";
 import { AssetDailyController } from "src/controllers/AssetsDaily.controller";
 import { AssetDaily, AssetDailySchema } from "src/@mongoose/AssetDaily.schema";
 import { AssetController } from "../controllers/Asset.controller";
