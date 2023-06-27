@@ -9,7 +9,13 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: ["172.18.0.1:9092"],
+        brokers: ["improved-lemur-14028-us1-kafka.upstash.io:9092"],
+        sasl: {
+          mechanism: "scram-sha-256",
+          username: process.env.UPSTASH_KAFKA_USERNAME,
+          password: process.env.UPSTASH_KAFKA_PASSWORD,
+        },
+        ssl: true,
       },
       consumer: {
         groupId: "orders-consumer",

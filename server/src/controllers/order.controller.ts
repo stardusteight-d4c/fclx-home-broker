@@ -15,12 +15,7 @@ import { OrderService } from "src/services/order.service";
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Get("wallet/:wallet_id")
-  public async all(@Param("wallet_id") wallet_id: string) {
-    return this.orderService.findAllOrdersById(wallet_id);
-  }
-
-  @Post("wallet/:wallet_id")
+  @Post(":wallet_id")
   public async initTransactionDto(
     @Param("wallet_id") wallet_id: string,
     @Body() body: Omit<InitTransactionDto, "wallet_id">
@@ -36,6 +31,11 @@ export class OrderController {
     @Body() body: InputExecuteTransactionDto
   ) {
     return await this.orderService.executeTransaction(body);
+  }
+
+  @Get(":wallet_id")
+  public async all(@Param("wallet_id") wallet_id: string) {
+    return this.orderService.findAllOrdersById(wallet_id);
   }
 
   @MessagePattern("output")

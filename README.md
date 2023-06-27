@@ -100,3 +100,8 @@ Certifique-se de usar o formato correto ao utilizar comandos como `ping` e `teln
 
 fixing Unable to connect to the database. Retrying
 with directConnection=true
+
+explicar control center http://localhost:9021/
+
+erro kafka.upstash.io "This server does not host this topic-partition"
+Você precisa criar os tópicos no upstash antes de tentar conectar com eles

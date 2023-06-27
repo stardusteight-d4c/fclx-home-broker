@@ -3,9 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"os"
 	"sync"
 
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/joho/godotenv"
 	"github.com/stardusteight-d4c/fclx-home-broker/trade/internal/infra/kafka"
 	"github.com/stardusteight-d4c/fclx-home-broker/trade/internal/market/dto"
 	"github.com/stardusteight-d4c/fclx-home-broker/trade/internal/market/entity"
@@ -13,18 +16,35 @@ import (
 )
 
 func main() {
+	err := godotenv.Load("../../.env")
+	if err != nil {
+		log.Fatal("error loading .env file")
+	}
+
+	upstashKafkaUsername := os.Getenv("UPSTASH_KAFKA_USERNAME")
+	upstashKafkaPassword := os.Getenv("UPSTASH_KAFKA_PASSWORD")
+
+	fmt.Println("environment variable values: ", upstashKafkaUsername, upstashKafkaPassword)
+
 	ordersIn := make(chan *entity.Order)
 	ordersOut := make(chan *entity.Order)
 	wg := &sync.WaitGroup{}
 	defer wg.Wait()
-
 	kafkaMsgChan := make(chan *ckafka.Message)
+
 	configMap := &ckafka.ConfigMap{
-		// network docker gateway ip + port
-		"bootstrap.servers": "172.18.0.1:9092",
-		"group.id":          "myGroup",
-		"auto.offset.reset": "latest",
+		// network docker gateway ip + port 172.18.0.1:9092 || upstash endpoint
+		"bootstrap.servers":   "improved-lemur-14028-us1-kafka.upstash.io:9092",
+		"group.id":            "myGroup",
+		"auto.offset.reset":   "latest",
+		"sasl.username":       upstashKafkaUsername,
+		"sasl.password":       upstashKafkaPassword,
+		"security.protocol":   "sasl_ssl",
+		"sasl.mechanisms":     "SCRAM-SHA-256",
+		"ssl.ca.location":     "/etc/ssl/certs",
+		"api.version.request": true,
 	}
+
 	producer := kafka.NewKafkaProducer(configMap)
 	kafka := kafka.NewConsumer(configMap, []string{"input"})
 
@@ -66,6 +86,9 @@ func main() {
 		producer.Publish(outputJson, []byte("orders"), "output")
 	}
 }
+
+// ao utilizar o upstash, não precisa subir os container referentes ao serviço do kafka, apenas o da aplicação
+// com docker compose up app
 
 // kafka messages (input topic)
 
