@@ -13,3 +13,7 @@ export function isHomeBrokerClosed() {
 }
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
+export function isOdd(number: number) {
+  return number % 2 !== 0;
+}

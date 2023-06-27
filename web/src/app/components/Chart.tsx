@@ -117,7 +117,7 @@ export const Chart = forwardRef<
   }, []);
 
   return (
-    <div className="flex-grow relative" ref={chartContainerRef}>
+    <div className="w-full relative" ref={chartContainerRef}>
       <article className="absolute top-0 left-0 z-50 format format-invert">
         <div className="text-3xl font-bold text-white">{props.header}</div>
       </article>

@@ -105,3 +105,5 @@ explicar control center http://localhost:9021/
 
 erro kafka.upstash.io "This server does not host this topic-partition"
 Você precisa criar os tópicos no upstash antes de tentar conectar com eles
+
+explicar a importância de um serviço de mensageria Microservices: Quando utilizar? Vantagens e Desvantagens + Abertura das matrículas 40:00

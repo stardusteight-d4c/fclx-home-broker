@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: { wallet_id: string } }
 ) {
   const response = await fetch(
-    `http://host.docker.internal:3000/wallets/${params.wallet_id}/assets`,
+    `http://localhost:3000/wallet/${params.wallet_id}/asset`,
     {
       //cache: 'no-store', does not cache the request
       next: {
