@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.text-shadow-green-500 {
+  text-shadow: 1px 1px 2px #22c55e;
+}
+
+.text-shadow-blue-500 {
+  text-shadow: 1px 1px 2px #3b82f6;
+}
+
+.text-shadow-yellow-500 {
+  text-shadow: 1px 1px 2px #eab308;
+}
+
+.text-shadow-red-500 {
+  text-shadow: 1px 1px 2px #ef4444;
+}
+

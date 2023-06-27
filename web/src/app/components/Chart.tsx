@@ -11,7 +11,7 @@ import {
 } from "react";
 
 const colors = {
-  backgroundColor: "rgba(17 24 39)",
+  backgroundColor: "#1a1c20",
   lineColor: "#2962FF",
   textColor: "white",
   areaTopColor: "#2962FF",
@@ -75,16 +75,15 @@ export const Chart = forwardRef<
       bottomColor: colors.areaBottomColor,
     });
     // seriesRef.current.setData([
-    //   { time: "2018-12-22", value: 32.51 },
-    //   { time: "2018-12-23", value: 31.11 },
-    //   { time: "2018-12-24", value: 27.02 },
-    //   { time: "2018-12-25", value: 27.32 },
-    //   { time: "2018-12-26", value: 25.17 },
-    //   { time: "2018-12-27", value: 28.89 },
-    //   { time: "2018-12-28", value: 25.46 },
-    //   { time: "2018-12-29", value: 23.92 },
-    //   { time: "2018-12-30", value: 22.68 },
-    //   { time: "2018-12-31", value: 22.67 },
+    //   { time: "2023-06-22", value: 32.51 },
+    //   { time: "2023-06-23", value: 31.11 },
+    //   { time: "2023-06-24", value: 27.02 },
+    //   { time: "2023-06-25", value: 27.32 },
+    //   { time: "2023-06-26", value: 25.17 },
+    //   { time: "2023-06-27", value: 28.89 },
+    //   { time: "2023-06-28", value: 25.46 },
+    //   { time: "2023-06-29", value: 23.92 },
+    //   { time: "2023-06-30", value: 22.68 },
     // ]);
   }, []);
 
@@ -117,9 +116,9 @@ export const Chart = forwardRef<
   }, []);
 
   return (
-    <div className="w-full relative" ref={chartContainerRef}>
-      <article className="absolute top-0 left-0 z-50 format format-invert">
-        <div className="text-3xl font-bold text-white">{props.header}</div>
+    <div className="w-full relative bg-[#1a1c20] overflow-hidden shadow-black/25 shadow-lg rounded-xl" ref={chartContainerRef}>
+      <article className="absolute top-0 left-0 z-50">
+        <div className="text-3xl font-bold p-4 text-white">{props.header}</div>
       </article>
     </div>
   );

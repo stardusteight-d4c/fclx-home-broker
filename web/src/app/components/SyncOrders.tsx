@@ -4,14 +4,14 @@ import { PropsWithChildren, startTransition } from "react"
 import useSWRSubscription, { SWRSubscriptionOptions } from "swr/subscription"
 import { revalidateOrders } from "../actions/revalidate-orders"
 /**
- * Esse client componente envolve o server component MyOrders, para propagar
+ * Esse client component envolve o server component MyOrders, para propagar
  * uma revalidação que fará o componente MyOrders ser rerenderizado com os dados
  * atualizados.
  */
 
 export function SyncOrders(props: PropsWithChildren<{ wallet_id: string }>) {
   const { data, error } = useSWRSubscription(
-    `http://localhost:3000/wallets/${props.wallet_id}/orders/events`,
+    `http://localhost:3000/order/${props.wallet_id}/events`,
     (path, { next }: SWRSubscriptionOptions) => {
       const eventSource = new EventSource(path)
 

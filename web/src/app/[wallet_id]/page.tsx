@@ -1,7 +1,7 @@
 import MyWallet from "../components/MyWallet"
 import Navbar from "../components/Navbar"
 
-export default async function HomePage({
+export default async function MyWalletPage({
   params,
 }: {
   params: { wallet_id: string }

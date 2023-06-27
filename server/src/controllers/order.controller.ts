@@ -56,7 +56,7 @@ export class OrderController {
     });
   }
 
-  @Sse("events")
+  @Sse(":wallet_id/events")
   subscribeOrderEvents(
     @Param("wallet_id") wallet_id: string
   ): Observable<MessageEvent> {

@@ -24,8 +24,6 @@ func main() {
 	upstashKafkaUsername := os.Getenv("UPSTASH_KAFKA_USERNAME")
 	upstashKafkaPassword := os.Getenv("UPSTASH_KAFKA_PASSWORD")
 
-	fmt.Println("environment variable values: ", upstashKafkaUsername, upstashKafkaPassword)
-
 	ordersIn := make(chan *entity.Order)
 	ordersOut := make(chan *entity.Order)
 	wg := &sync.WaitGroup{}

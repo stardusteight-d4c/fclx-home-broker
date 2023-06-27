@@ -42,7 +42,7 @@ export class WalletController {
     return await this.walletService.getAllWalletAssets({ wallet_id });
   }
 
-  @Sse("asset/events")
+  @Sse(":wallet_id/asset/events")
   public subscribeWalletAssetEvents(
     @Param("wallet_id") wallet_id: string
   ): Observable<MessageEvent> {

@@ -9,14 +9,14 @@ export default function MyWallet(props: { wallet_id: string }) {
   const { data: walletAssets, mutate: mutateWalletAssets } = useSWR<
     WalletAsset[]
     // /api/wallet
-  >(`http://localhost:8000/wallet/${props.wallet_id}/asset`, fetcher, {
+  >(`http://localhost:3001/api/wallet/${props.wallet_id}/asset`, fetcher, {
     fallbackData: [],
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
   })
 
   const { data: assetChanged } = useSWRSubscription(
-    `http://localhost:3000/assets/events`,
+    `http://localhost:3000/asset/events`,
     (path, { next }: SWRSubscriptionOptions) => {
       const eventSource = new EventSource(path)
       eventSource.addEventListener("asset-price-changed", async (event) => {
@@ -35,7 +35,6 @@ export default function MyWallet(props: { wallet_id: string }) {
         }, false)
         next(null, assetChanged)
       })
-
       eventSource.onerror = (event) => {
         console.error(event)
         eventSource.close()
@@ -77,9 +76,9 @@ export default function MyWallet(props: { wallet_id: string }) {
   )
 
   return (
-    <div className="w-full pb-8 overflow-x-hidden">
-      <table className="w-full block">
-        <thead className="font-semibold bg-[#1a1c20] border border-[#515359] grid grid-cols-4 w-full py-2 rounded-t-xl">
+    <div className="w-full pb-8">
+      <table className="w-full shadow-black/25 shadow-lg rounded-xl block">
+        <thead className="font-semibold bg-[#1a1c20] grid grid-cols-4 w-full py-2 rounded-t-xl">
           <th className="col-span-1 px-2 text-center uppercase">Name</th>
           <th className="col-span-1 px-2 text-center uppercase">Price</th>
           <th className="col-span-1 px-2 text-center uppercase">Amount</th>
@@ -91,7 +90,7 @@ export default function MyWallet(props: { wallet_id: string }) {
               key={index}
               className={`${isOdd(index) ? "bg-[#1a1c20]" : "bg-transparent"} ${
                 index === walletAssets.length - 1 ? "rounded-b-xl" : ""
-              } border border-[#515359] border-t-0 w-full grid grid-cols-4`}
+              } border border-x-0 border-t border-b-0 border-[#515359] w-full grid grid-cols-4`}
             >
               <td className="col-span-1 py-2 font-medium px-2 text-[#999999] text-start">
                 {walletAsset.Asset.id} ({walletAsset.Asset.symbol})
