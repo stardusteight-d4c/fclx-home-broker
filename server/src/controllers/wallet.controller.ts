@@ -14,7 +14,7 @@ import { WalletService } from "src/services/wallet.service";
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}
 
-  @Post("asset")
+  @Post(":wallet_id/asset")
   public async createWalletAsset(
     @Param("wallet_id") wallet_id: string,
     @Body() body: { asset_id: string; shares: number }
