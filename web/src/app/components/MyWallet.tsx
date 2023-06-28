@@ -16,7 +16,7 @@ export default function MyWallet(props: { wallet_id: string }) {
   })
 
   const { data: assetChanged } = useSWRSubscription(
-    `http://localhost:3000/asset/events`,
+    `http://172.18.0.1:3000/asset/events`,
     (path, { next }: SWRSubscriptionOptions) => {
       const eventSource = new EventSource(path)
       eventSource.addEventListener("asset-price-changed", async (event) => {

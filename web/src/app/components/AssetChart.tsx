@@ -10,7 +10,7 @@ export const AssetChartComponent = (props: { asset_id: string }) => {
   const chartRef = useRef() as MutableRefObject<ChartComponentRef>
   //implementar na api do nextjs para trabalhar após as 18h
   const { data: asset, mutate } = useSWR(
-    `http://localhost:3000/assets/${props.asset_id}`,
+    `http://172.18.0.1:3000/assets/${props.asset_id}`,
     fetcher,
     {
       fallbackData: { id: props.asset_id, price: 0 },
@@ -18,7 +18,7 @@ export const AssetChartComponent = (props: { asset_id: string }) => {
   )
 
   const { data: assetDaily } = useSWRSubscription(
-    `http://localhost:3000/assets/${props.asset_id}/daily/events`,
+    `http://172.18.0.1:3000/assets/${props.asset_id}/daily/events`,
     (path, { next }: SWRSubscriptionOptions) => {
       const eventSource = new EventSource(path)
       eventSource.addEventListener("asset-daily-created", async (event) => {

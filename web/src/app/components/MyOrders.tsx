@@ -2,7 +2,7 @@ import { isHomeBrokerClosed, isOdd } from "../utils"
 
 async function getOrders(wallet_id: string): Promise<Order[]> {
   const response = await fetch(
-    `http://localhost:3000/order/${wallet_id}`,
+    `http://172.18.0.1:3000/order/${wallet_id}`,
     {
       next: {
         tags: [`orders-wallet-${wallet_id}`],

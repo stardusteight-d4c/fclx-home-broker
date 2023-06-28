@@ -3,14 +3,14 @@ POST http://localhost:3000/wallet
 Content-Type: application/json
 
 {
-  "id": "wallet2"
+  "id": "wallet1"
 }
 ###
-POST http://localhost:3000/wallet/wallet2/asset
+POST http://localhost:3000/wallet/wallet1/asset
 Content-Type: application/json
 
 {
-  "asset_id": "asset2",
+  "asset_id": "asset1",
   "shares": 10
 }
 ###
@@ -26,7 +26,7 @@ POST http://localhost:3000/asset
 Content-Type: application/json
 
 {
-  "id": "asset3",
+  "id": "asset1",
   "symbol": "A1",
   "price": 100
 }

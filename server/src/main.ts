@@ -22,6 +22,11 @@ async function bootstrap() {
       },
     },
   });
+  app.enableCors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  });
   await app.startAllMicroservices();
   await app.listen(3000);
 }

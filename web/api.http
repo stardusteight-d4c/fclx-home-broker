@@ -1,5 +1,6 @@
-GET http://localhost:8000/wallet/wallet1/asset
+### Docker internal network (gateway ip address)
+GET http://172.18.0.1:8000/wallet/wallet1/asset
 ###
-GET http://localhost:8000/wallet/wallet1/order
+GET http://172.18.0.1:8000/wallet/wallet1/order
 ###
-POST http://localhost:8000/wallet/wallet1/order
+POST http://172.18.0.1:8000/wallet/wallet1/order

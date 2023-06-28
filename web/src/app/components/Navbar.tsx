@@ -1,11 +1,10 @@
 "use client"
 
-import { usePathname, useParams } from "next/navigation"
+import { useParams } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 
 export default function Navbar() {
-  const pathname = usePathname()
   const params = useParams()
 
   return (

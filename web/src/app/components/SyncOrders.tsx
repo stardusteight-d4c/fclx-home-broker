@@ -11,7 +11,7 @@ import { revalidateOrders } from "../actions/revalidate-orders"
 
 export function SyncOrders(props: PropsWithChildren<{ wallet_id: string }>) {
   const { data, error } = useSWRSubscription(
-    `http://localhost:3000/order/${props.wallet_id}/events`,
+    `http://172.18.0.1:3000/order/${props.wallet_id}/events`,
     (path, { next }: SWRSubscriptionOptions) => {
       const eventSource = new EventSource(path)
 
