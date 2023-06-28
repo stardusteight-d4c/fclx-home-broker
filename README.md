@@ -107,3 +107,6 @@ erro kafka.upstash.io "This server does not host this topic-partition"
 Você precisa criar os tópicos no upstash antes de tentar conectar com eles
 
 explicar a importância de um serviço de mensageria Microservices: Quando utilizar? Vantagens e Desvantagens + Abertura das matrículas 40:00
+
+
+O erro "Hydration failed because the initial UI does not match what was rendered on the server" ocorre quando há uma inconsistência entre o conteúdo renderizado inicialmente no servidor e o que está sendo hidratado no lado do cliente durante a inicialização do React.

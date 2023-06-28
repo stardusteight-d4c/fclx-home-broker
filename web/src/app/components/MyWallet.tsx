@@ -8,12 +8,13 @@ import { fetcher, isOdd } from "../utils"
 export default function MyWallet(props: { wallet_id: string }) {
   const { data: walletAssets, mutate: mutateWalletAssets } = useSWR<
     WalletAsset[]
-    // /api/wallet
   >(`http://localhost:3001/api/wallet/${props.wallet_id}/asset`, fetcher, {
     fallbackData: [],
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
   })
+
+  console.log(walletAssets)
 
   const { data: assetChanged } = useSWRSubscription(
     `http://172.18.0.1:3000/asset/events`,
@@ -48,7 +49,7 @@ export default function MyWallet(props: { wallet_id: string }) {
   )
 
   const { data: walletAssetUpdated } = useSWRSubscription(
-    `http://localhost:3000/wallet/${props.wallet_id}/asset/events`,
+    `http://172.18.0.1:3000/wallet/${props.wallet_id}/asset/events`,
     (path, { next }: SWRSubscriptionOptions) => {
       const eventSource = new EventSource(path)
       eventSource.addEventListener("wallet-asset-updated", async (event) => {
@@ -77,12 +78,16 @@ export default function MyWallet(props: { wallet_id: string }) {
 
   return (
     <div className="w-full pb-8">
-      <table className="w-full shadow-black/25 shadow-lg rounded-xl block">
-        <thead className="font-semibold bg-[#1a1c20] grid grid-cols-4 w-full py-2 rounded-t-xl">
-          <th className="col-span-1 px-2 text-center uppercase">Name</th>
-          <th className="col-span-1 px-2 text-center uppercase">Price</th>
-          <th className="col-span-1 px-2 text-center uppercase">Amount</th>
-          <th className="col-span-1 px-2 text-center uppercase">Operations</th>
+      <table className="block w-full">
+        <thead className="w-full shadow-black/25 shadow-lg rounded-xl block">
+          <tr className="font-semibold bg-[#1a1c20] grid grid-cols-4 w-full py-2 rounded-t-xl">
+            <th className="col-span-1 px-2 text-center uppercase">Name</th>
+            <th className="col-span-1 px-2 text-center uppercase">Price</th>
+            <th className="col-span-1 px-2 text-center uppercase">Amount</th>
+            <th className="col-span-1 px-2 text-center uppercase">
+              Operations
+            </th>
+          </tr>
         </thead>
         <tbody className="w-full block">
           {walletAssets?.map((walletAsset, index) => (
@@ -104,7 +109,6 @@ export default function MyWallet(props: { wallet_id: string }) {
               <td className="col-span-1 py-2 border border-x-0 border-y-0 border-[#515359] font-medium px-2 text-[#999999] text-start">
                 <Link
                   className="font-light hover:underline text-[#0261FF]"
-                  // href={"/"}
                   href={`/${props.wallet_id}/home-broker/${walletAsset.Asset.id}`}
                 >
                   Buy/Sell
