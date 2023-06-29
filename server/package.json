@@ -13,7 +13,7 @@
     "start:prod": "node dist/main",
     "prisma-generate": "cd src/@orm/prisma && npx prisma generate",
     "prisma-studio": "cd src/@orm/prisma && npx prisma studio",
-    "command": "npm run start -- --entryFile command --"
+    "test": "vitest"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",

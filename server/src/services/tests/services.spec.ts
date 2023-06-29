@@ -8,7 +8,7 @@ import { AssetDaily as AssetDailySchema } from "src/@mongoose/asset-daily.schema
 import { Asset as AssetSchema } from "src/@mongoose/asset.schema";
 import { Order as OrderSchema } from "src/@mongoose/order.schema";
 import { Model } from "mongoose";
-import { ClientKafka, Transport } from "@nestjs/microservices";
+import { ClientKafka } from "@nestjs/microservices";
 
 const prismaService = new PrismaService();
 const kafkaOptions: any = {
@@ -27,8 +27,18 @@ let walletService: WalletService;
 let assetService: AssetService;
 let orderService: OrderService;
 
+// Of course you should do tests with in-memory repositories!
+
 describe("UserService", () => {
   beforeEach(async () => {
+    await prismaService.transaction.deleteMany({});
+    await prismaService.walletAsset.deleteMany({});
+    await prismaService.assetDaily.deleteMany({});
+    await prismaService.assetHistory.deleteMany({});
+    await prismaService.order.deleteMany({});
+    await prismaService.asset.deleteMany({});
+    await prismaService.wallet.deleteMany({});
+
     walletService = new WalletService(prismaService, Model<WalletAssetSchema>);
     assetService = new AssetService(
       prismaService,
@@ -43,152 +53,121 @@ describe("UserService", () => {
   });
 
   afterEach(async () => {
-    // deletar todas infomações do banco de dados
-    // for (const repositoryKey in repositories) {
-    //   if (repositories.hasOwnProperty(repositoryKey)) {
-    //     const repository = repositories[repositoryKey];
-    //     await repository.deleteAll();
-    //   }
-    // }
+    await prismaService.transaction.deleteMany({});
+    await prismaService.walletAsset.deleteMany({});
+    await prismaService.assetDaily.deleteMany({});
+    await prismaService.assetHistory.deleteMany({});
+    await prismaService.order.deleteMany({});
+    await prismaService.asset.deleteMany({});
+    await prismaService.wallet.deleteMany({});
   });
 
-  // it("must be able create an instance of User", async () => {
-  //   const user = factory.getUser();
-  //   expect(await userService.createUser(user)).toBeInstanceOf(User);
-  // });
+  it("should be possible to create assets", async () => {
+    const asset1 = {
+      id: "asset1",
+      price: 100,
+      symbol: "asset1",
+    };
+    const asset2 = {
+      id: "asset2",
+      price: 200,
+      symbol: "asset2",
+    };
+    expect(await assetService.createAsset(asset1)).contains(asset1);
+    expect(await assetService.createAsset(asset2)).contains(asset2);
+  });
 
-  // it("must be not able to create a user with an email already existing in the repository", async () => {
-  //   const user1 = factory.getUser({
-  //     username: "link",
-  //     email: "example@email.com",
-  //   });
-  //   const user2 = factory.getUser({
-  //     username: "zelda",
-  //     email: "example@email.com",
-  //   });
-  //   expect(await userService.createUser(user1)).toBeInstanceOf(User);
-  //   await expect(userService.createUser(user2)).rejects.toThrowError(
-  //     userErrors.emailAlreadyExists
-  //   );
-  // });
+  it("should be possible to create a wallet just by specifying the id", async () => {
+    const wallet_id1 = "wallet1";
+    const wallet_id2 = "wallet2";
+    expect(
+      await walletService.createWallet({ wallet_id: wallet_id1 })
+    ).contains({ id: wallet_id1 });
+    expect(
+      await walletService.createWallet({ wallet_id: wallet_id2 })
+    ).contains({ id: wallet_id2 });
+  });
 
-  // it("must be not able to create a user with an username already existing in the repository", async () => {
-  //   const user1 = factory.getUser({
-  //     username: "gameboy",
-  //     email: "satoshitajiri@email.com",
-  //   });
-  //   const user2 = factory.getUser({
-  //     username: "gameboy",
-  //     email: "pokemoncompany@email.com",
-  //   });
-  //   expect(await userService.createUser(user1)).toBeInstanceOf(User);
-  //   await expect(userService.createUser(user2)).rejects.toThrowError(
-  //     userErrors.usernameAlreadyExists
-  //   );
-  // });
+  it("should be possible to create wallet assets", async () => {
+    const wallet1asset1 = {
+      asset_id: "asset1",
+      wallet_id: "wallet1",
+      shares: 10000,
+    };
+    const wallet1asset2 = {
+      asset_id: "asset2",
+      wallet_id: "wallet1",
+      shares: 20000,
+    };
+    const wallet2asset1 = {
+      asset_id: "asset1",
+      wallet_id: "wallet2",
+      shares: 5000,
+    };
+    const wallet2asset2 = {
+      asset_id: "asset2",
+      wallet_id: "wallet2",
+      shares: 1000,
+    };
+    expect(await walletService.createWalletAsset(wallet1asset1)).contains(
+      wallet1asset1
+    );
+    expect(await walletService.createWalletAsset(wallet1asset2)).contains(
+      wallet1asset2
+    );
+    expect(await walletService.createWalletAsset(wallet2asset1)).contains(
+      wallet2asset1
+    );
+    expect(await walletService.createWalletAsset(wallet2asset2)).contains(
+      wallet2asset2
+    );
+  });
 
-  // it("must be mandatory to use the id when updating a user", async () => {
-  //   const user = factory.getUser();
-  //   const newSocialLinks: ISocialLinks = {
-  //     email: "email@example.com",
-  //     github: "https://github.com/stardusteight-d4c",
-  //   };
-  //   await expect(
-  //     userService.updateUser({
-  //       ...user,
-  //       socialLinks: newSocialLinks,
-  //     })
-  //   ).rejects.toThrowError(userErrors.userNotFoundWithId(undefined));
-  // });
+  it("should be possible to create purchase orders", async () => {
+    // criar funções para criar as carteiras e ativos 
+  });
 
-  // it("must be able to update a user partially", async () => {
-  //   const user = factory.getUser();
-  //   const userInstance = await userService.createUser(user);
-  //   const userId = userInstance.reflect.id;
-  //   const newSocialLinks: ISocialLinks = {
-  //     email: "email@example.com",
-  //     github: "https://github.com/stardusteight-d4c",
-  //   };
-  //   delete user.password;
-  //   delete user.username;
-  //   delete user.email;
-  //   delete user.avatar;
-  //   delete user.userRole;
-  //   const updatedUser = await userService.updateUser({
-  //     ...user,
-  //     id: userId,
-  //     socialLinks: newSocialLinks,
-  //   });
-  //   delete user.socialLinks;
-  //   const newUpdatedUser = await userService.updateUser({
-  //     ...user,
-  //     id: userId,
-  //   });
-  //   const finalUserState = await userService.getUserById(userId);
-  //   const initialState = userInstance.reflect;
-  //   const finalState = finalUserState.reflect;
-  //   expect(updatedUser.reflect.socialLinks).toStrictEqual(newSocialLinks);
-  //   expect(updatedUser.reflect.id).toStrictEqual(userInstance.reflect.id);
-  //   expect(finalState["id"]).toStrictEqual(initialState["id"]);
-  //   expect(finalState["password"]).toStrictEqual(initialState["password"]);
-  //   expect(finalState["username"]).toStrictEqual(initialState["username"]);
-  //   expect(finalState["email"]).toStrictEqual(initialState["email"]);
-  //   expect(finalState["avatar"]).toStrictEqual(initialState["avatar"]);
-  //   expect(finalState["userRole"]).toStrictEqual(initialState["userRole"]);
-  //   expect(newUpdatedUser.reflect["socialLinks"]).toStrictEqual(
-  //     finalState["socialLinks"]
-  //   );
-  // });
+  // async createOrders() {
+  //   console.log('Creating orders...');
+  //   const range = (start: number, end: number) =>
+  //     Array.from({ length: end - start }, (_, i) => i + start);
 
-  // it("must be able to delete a user", async () => {
-  //   const user = factory.getUser();
-  //   const userInstance = await userService.createUser(user);
-  //   const userId = userInstance.reflect.id;
-  //   await userService.deleteUser(userId);
-  //   expect(await userService.getUserById(userId)).toStrictEqual(undefined);
-  // });
+  //   for (const index of range(1, 100)) {
+  //     await this.ordersService.initTransaction({
+  //       asset_id: 'asset1',
+  //       wallet_id: 'wallet1',
+  //       price: 100 + index,
+  //       shares: 1000,
+  //       type: 'SELL',
+  //     });
 
-  // it("must be able get a user by id", async () => {
-  //   const user = factory.getUser();
-  //   const userInstance = await userService.createUser(user);
-  //   const userId = userInstance.reflect.id;
-  //   expect(await userService.getUserById(userId)).toStrictEqual(userInstance);
-  // });
+  //     await this.ordersService.initTransaction({
+  //       asset_id: 'asset1',
+  //       wallet_id: 'wallet2',
+  //       price: 100 + index + 10,
+  //       shares: 1000,
+  //       type: 'BUY',
+  //     });
 
-  // it("must be able get a user by email", async () => {
-  //   const user = factory.getUser();
-  //   const userInstance = await userService.createUser(user);
-  //   const userEmail = userInstance.reflect.email;
-  //   expect(await userService.getUserByEmail(userEmail)).toStrictEqual(
-  //     userInstance
-  //   );
-  // });
+  //     await this.ordersService.initTransaction({
+  //       asset_id: 'asset2',
+  //       wallet_id: 'wallet1',
+  //       price: 200 + index,
+  //       shares: 1000,
+  //       type: 'SELL',
+  //     });
 
-  // it("must be able get a user by username", async () => {
-  //   const user = factory.getUser();
-  //   const userInstance = await userService.createUser(user);
-  //   const username = userInstance.reflect.username;
-  //   expect(await userService.getUserByUsername(username)).toStrictEqual(
-  //     userInstance
-  //   );
-  // });
+  //     await this.ordersService.initTransaction({
+  //       asset_id: 'asset2',
+  //       wallet_id: 'wallet2',
+  //       price: 200 + index + 10,
+  //       shares: 1000,
+  //       type: 'BUY',
+  //     });
 
-  // it("must be able get a users by username", async () => {
-  //   const user1 = factory.getUser({
-  //     username: "browser",
-  //     email: "supermario@email.com",
-  //   });
-  //   const user2 = factory.getUser({
-  //     username: "browsernavigator",
-  //     email: "firefox@email.com",
-  //   });
-  //   const user3 = factory.getUser({
-  //     username: "crash",
-  //     email: "crashbandicoot@email.com",
-  //   });
-  //   await userService.createUser(user1);
-  //   await userService.createUser(user2);
-  //   await userService.createUser(user3);
-  //   expect(await userService.getUsersByUsername("browser")).toHaveLength(2);
-  // });
+  //     await sleep(2000);
+  //   }
+  // }
+
+ 
 });
