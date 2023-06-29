@@ -4,7 +4,11 @@ import { Transport } from "@nestjs/microservices";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
-
+  app.enableCors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  });
   app.connectMicroservice({
     transport: Transport.KAFKA,
     options: {
@@ -21,11 +25,6 @@ async function bootstrap() {
         groupId: "orders-consumer",
       },
     },
-  });
-  app.enableCors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   });
   await app.startAllMicroservices();
   await app.listen(3000);

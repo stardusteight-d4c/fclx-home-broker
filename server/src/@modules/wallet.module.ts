@@ -11,18 +11,6 @@ import { WalletService } from "src/services/wallet.service";
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: "ORDERS_PUBLISHER",
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: "orders",
-            brokers: ["172.18.0.1:9092"],
-          },
-        },
-      },
-    ]),
     MongooseModule.forFeature([
       { name: WalletAsset.name, schema: WalletAssetSchema },
       { name: Order.name, schema: OrderSchema },

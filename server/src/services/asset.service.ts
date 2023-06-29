@@ -13,7 +13,7 @@ import {
   updatePipeline,
 } from "./@helpers/data";
 import { Asset as AssetSchema } from "src/@mongoose/asset.schema";
-import { AssetDaily as AssetDailySchema } from "../@mongoose/asset-daily.schema";
+import { AssetDaily as AssetDailySchema } from "src/@mongoose/asset-daily.schema";
 
 @Injectable()
 export class AssetService {
