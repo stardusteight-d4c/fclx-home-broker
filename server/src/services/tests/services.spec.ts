@@ -124,7 +124,7 @@ describe("UserService", () => {
   });
 
   it("should be possible to create purchase orders", async () => {
-    // criar funções para criar as carteiras e ativos 
+    // criar funções para criar as carteiras e ativo
   });
 
   // async createOrders() {
