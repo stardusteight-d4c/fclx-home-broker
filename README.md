@@ -110,3 +110,12 @@ explicar a importância de um serviço de mensageria Microservices: Quando utili
 
 
 O erro "Hydration failed because the initial UI does not match what was rendered on the server" ocorre quando há uma inconsistência entre o conteúdo renderizado inicialmente no servidor e o que está sendo hidratado no lado do cliente durante a inicialização do React.
+
+/**
+  * The rest who must validate these transactions and actually carry out the changes
+  * and sync the data with this API server to the frontend with the trade-service
+  * a service made in GO where the business logic and transaction calculations are
+  * Kafka messaging service, so we maintain communication between systems where both
+  * are reading and publishing messages, and in the case of this server, sending updates
+  * via Server Sent Events to the web client. 
+  */

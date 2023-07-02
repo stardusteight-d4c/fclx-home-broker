@@ -35,7 +35,7 @@ export class OrderController {
 
   @Get(":wallet_id")
   public async all(@Param("wallet_id") wallet_id: string) {
-    return this.orderService.findAllOrdersById(wallet_id);
+    return this.orderService.findAllOrdersByWalletId(wallet_id);
   }
 
   @MessagePattern("output")

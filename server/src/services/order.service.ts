@@ -52,9 +52,9 @@ export class OrderService {
     });
   }
 
-  public async findAllOrdersByAssetId(asset_id: string): Promise<Order[] | void> {
+  public async findAllOrdersByWalletId(wallet_id: string): Promise<Order[] | void> {
     return this.#handler
-      .findAllOrdersByAssetId(asset_id)
+      .findAllOrdersByWalletId(wallet_id)
       .then((orders) => orders)
       .catch((err) => console.error(err));
   }

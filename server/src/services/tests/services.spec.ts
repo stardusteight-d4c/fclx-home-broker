@@ -125,7 +125,6 @@ describe("UserService", () => {
 
   it("should be possible to create purchase orders", async () => {
     const valuation = 1.5;
-
     const sellOrder: Order = await orderService.initTransaction({
       asset_id: "asset1",
       wallet_id: "wallet1",
@@ -138,7 +137,6 @@ describe("UserService", () => {
     expect(sellOrder.price).toStrictEqual(101.5)
     expect(sellOrder.shares).toStrictEqual(1000)
 
-
    const buyOrder =  await orderService.initTransaction({
       asset_id: "asset1",
       wallet_id: "wallet2",
@@ -146,32 +144,18 @@ describe("UserService", () => {
       shares: 1000,
       type: "BUY",
     });
-
- 
     expect(buyOrder.status).toStrictEqual("PENDING")
     expect(buyOrder.type).toStrictEqual("BUY")
     expect(buyOrder.price).toStrictEqual( 103.5)
     expect(buyOrder.shares).toStrictEqual(1000)
-
-    const finalOrderState = await orderService.findAllOrdersByAssetId(sellOrder.asset_id)
     
-    
-console.log(finalOrderState);
-
-    // await orderService.initTransaction({
-    //   asset_id: "asset2",
-    //   wallet_id: "wallet1",
-    //   price: 200 + valuation,
-    //   shares: 1000,
-    //   type: "SELL",
-    // });
-
-    // await orderService.initTransaction({
-    //   asset_id: "asset2",
-    //   wallet_id: "wallet2",
-    //   price: 200 + valuation + 2.0,
-    //   shares: 1000,
-    //   type: "BUY",
-    // });
+    /**
+     * The rest who must validate these transactions and actually carry out the changes
+     * and sync the data with this API server to the frontend with the trade-service
+     * a service made in GO where the business logic and transaction calculations are
+     * Kafka messaging service, so we maintain communication between systems where both
+     * are reading and publishing messages in certain topics, and in the case of 
+     * this server, sending updates via Server Sent Events to the web client. 
+     */
   });
 });

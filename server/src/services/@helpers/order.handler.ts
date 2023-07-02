@@ -31,10 +31,10 @@ export class OrderHandler {
     });
   }
 
-  public async findAllOrdersByAssetId(asset_id: string) {
+  public async findAllOrdersByWalletId(wallet_id: string) {
     return await this.#prismaService.order.findMany({
       where: {
-        asset_id,
+        wallet_id,
       },
       include: {
         Transactions: true,
