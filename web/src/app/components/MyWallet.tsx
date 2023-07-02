@@ -14,8 +14,6 @@ export default function MyWallet(props: { wallet_id: string }) {
     revalidateOnReconnect: false,
   })
 
-  console.log(walletAssets)
-
   const { data: assetChanged } = useSWRSubscription(
     `http://172.18.0.1:3000/asset/events`,
     (path, { next }: SWRSubscriptionOptions) => {

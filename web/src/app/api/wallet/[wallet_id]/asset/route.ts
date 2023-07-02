@@ -15,8 +15,6 @@ export async function GET(
         },
       }
     )
-    console.log(response);
-    
     return NextResponse.json(await response.json())
   } catch (err) {
     console.error(err)
