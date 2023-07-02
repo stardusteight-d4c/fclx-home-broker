@@ -38,3 +38,17 @@ type ExecuteTransactionMessage = {
     price: number;
   }[];
 };
+
+interface Order {
+  id: string;
+  wallet_id: string;
+  asset_id: string;
+  shares: number;
+  price: number;
+  type: OrderType;
+  status: OrderStatus;
+  partial: number;
+  version: number;
+  created_at: Date;
+  updated_at: Date;
+}

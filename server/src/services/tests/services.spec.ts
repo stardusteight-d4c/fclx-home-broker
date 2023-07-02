@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { AssetService } from "../asset.service";
 import { OrderService } from "../order.service";
 import { WalletService } from "../wallet.service";
@@ -27,7 +27,7 @@ let walletService: WalletService;
 let assetService: AssetService;
 let orderService: OrderService;
 
-// Of course you should do tests with in-memory repositories!
+// yeap, you should do tests with in-memory repositories!
 
 describe("UserService", () => {
   beforeEach(async () => {
@@ -52,7 +52,7 @@ describe("UserService", () => {
     );
   });
 
-  afterEach(async () => {
+  beforeAll(async () => {
     await prismaService.transaction.deleteMany({});
     await prismaService.walletAsset.deleteMany({});
     await prismaService.assetDaily.deleteMany({});
@@ -124,51 +124,54 @@ describe("UserService", () => {
   });
 
   it("should be possible to create purchase orders", async () => {
-  expect(await assetService.createAsset(asset1)).contains(asset1);
-    expect(await assetService.createAsset(asset2)).contains(asset2);
-  });
+    const valuation = 1.5;
 
-  // async createOrders() {
-  //   console.log('Creating orders...');
-  //   const range = (start: number, end: number) =>
-  //     Array.from({ length: end - start }, (_, i) => i + start);
+    const sellOrder: Order = await orderService.initTransaction({
+      asset_id: "asset1",
+      wallet_id: "wallet1",
+      price: 100 + valuation,
+      shares: 1000,
+      type: "SELL",
+    })
+    expect(sellOrder.status).toStrictEqual("PENDING")
+    expect(sellOrder.type).toStrictEqual("SELL")
+    expect(sellOrder.price).toStrictEqual(101.5)
+    expect(sellOrder.shares).toStrictEqual(1000)
 
-  //   for (const index of range(1, 100)) {
-  //     await this.ordersService.initTransaction({
-  //       asset_id: 'asset1',
-  //       wallet_id: 'wallet1',
-  //       price: 100 + index,
-  //       shares: 1000,
-  //       type: 'SELL',
-  //     });
 
-  //     await this.ordersService.initTransaction({
-  //       asset_id: 'asset1',
-  //       wallet_id: 'wallet2',
-  //       price: 100 + index + 10,
-  //       shares: 1000,
-  //       type: 'BUY',
-  //     });
-
-  //     await this.ordersService.initTransaction({
-  //       asset_id: 'asset2',
-  //       wallet_id: 'wallet1',
-  //       price: 200 + index,
-  //       shares: 1000,
-  //       type: 'SELL',
-  //     });
-
-  //     await this.ordersService.initTransaction({
-  //       asset_id: 'asset2',
-  //       wallet_id: 'wallet2',
-  //       price: 200 + index + 10,
-  //       shares: 1000,
-  //       type: 'BUY',
-  //     });
-
-  //     await sleep(2000);
-  //   }
-  // }
+   const buyOrder =  await orderService.initTransaction({
+      asset_id: "asset1",
+      wallet_id: "wallet2",
+      price: 100 + valuation + 2.0,
+      shares: 1000,
+      type: "BUY",
+    });
 
  
+    expect(buyOrder.status).toStrictEqual("PENDING")
+    expect(buyOrder.type).toStrictEqual("BUY")
+    expect(buyOrder.price).toStrictEqual( 103.5)
+    expect(buyOrder.shares).toStrictEqual(1000)
+
+    const finalOrderState = await orderService.findAllOrdersByAssetId(sellOrder.asset_id)
+    
+    
+console.log(finalOrderState);
+
+    // await orderService.initTransaction({
+    //   asset_id: "asset2",
+    //   wallet_id: "wallet1",
+    //   price: 200 + valuation,
+    //   shares: 1000,
+    //   type: "SELL",
+    // });
+
+    // await orderService.initTransaction({
+    //   asset_id: "asset2",
+    //   wallet_id: "wallet2",
+    //   price: 200 + valuation + 2.0,
+    //   shares: 1000,
+    //   type: "BUY",
+    // });
+  });
 });

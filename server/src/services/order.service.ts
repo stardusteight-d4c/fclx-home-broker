@@ -25,7 +25,7 @@ export class OrderService {
     this.#handler = new OrderHandler({ prismaService });
   }
 
-  private async createOrder(input: InitTransactionDto) {
+  private async createOrder(input: InitTransactionDto): Promise<Order> {
     return await this.prismaService.order.create({
       data: {
         asset_id: input.asset_id,
@@ -40,7 +40,7 @@ export class OrderService {
     });
   }
 
-  private async emitKafkaEvent(order: any) {
+  private async emitKafkaEvent(order: Order): Promise<void> {
     this.kafkaClient.emit("input", {
       order_id: order.id,
       investor_id: order.wallet_id,
@@ -52,23 +52,25 @@ export class OrderService {
     });
   }
 
-  public async findAllOrdersById(wallet_id: string) {
+  public async findAllOrdersByAssetId(asset_id: string): Promise<Order[] | void> {
     return this.#handler
-      .findAllOrdersById(wallet_id)
+      .findAllOrdersByAssetId(asset_id)
       .then((orders) => orders)
       .catch((err) => console.error(err));
   }
 
-  public async initTransaction(input: InitTransactionDto) {
+  public async initTransaction(input: InitTransactionDto): Promise<Order> {
     return this.createOrder(input)
-      .then((order) => {
+      .then((order: any) => {
         this.emitKafkaEvent(order);
         return order;
       })
       .catch((err) => console.log(err));
   }
 
-  public async executeTransaction(input: InputExecuteTransactionDto) {
+  public async executeTransaction(
+    input: InputExecuteTransactionDto
+  ): Promise<void> {
     this.prismaService
       .$transaction(async (prisma) => {
         const order = await prisma.order.findUniqueOrThrow({
