@@ -124,7 +124,8 @@ describe("UserService", () => {
   });
 
   it("should be possible to create purchase orders", async () => {
-    // criar funções para criar as carteiras e ativo
+  expect(await assetService.createAsset(asset1)).contains(asset1);
+    expect(await assetService.createAsset(asset2)).contains(asset2);
   });
 
   // async createOrders() {
