@@ -297,116 +297,94 @@ This combination of the "watch" feature and observables allows your application 
 
 In summary, the database "watch" feature, when used in conjunction with observables, provides an efficient and reactive way to observe data changes in real time, allowing your application to be asynchronously notified of these changes and take appropriate actions.
 
+### Problems and inconveniences
+
+#### Accessing localhost and containers
+
+When you make a `request to localhost` inside a container, you are making a request in the context of that container, if you have an exposed port on localhost but the process is running on your machine or in another container, just your machine or that another container will have access to that address.
+
+```yaml
+version: "3"
+
+services:
+  app:
+    container_name: application
+    build: .
+    ports:
+      - 3000:3000 # nestjs server
+      - 5555:5555 # prisma studio
+    volumes:
+      - .:/home/node/app
+    networks:
+      - fcexperience
+
+  mongodb:
+    container_name: mongodb
+    build: ./mongodb_rs
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: db
+      MONGO_REPLICA_HOST: localhost
+      MONGO_REPLICA_PORT: 27017
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+    networks:
+      - fcexperience
+
+networks:
+  fcexperience:
+    external: true
+```
+
+Initially I was running the backend application process on my machine, and consequently I was able to access the database that was running inside the `mongodb` service with the string: `mongodb://admin:password@localhost:27017/db?authSource =admin&directConnection=true`, as the process is also being exposed outside the container on port 27017, more specifically to the host machine. When I added the backend application in a container the connection string was already faulty, but even changing it to `mongodb://admin:password@mongodb:27017/db?authSource=admin&directConnection=true` and specifying the IP address as the of the `mongodb` service, the `app` container would still not be able to connect to the database, as both `would not be on the same Docker network`, so make sure that the MongoDB container and the application container backend are on the same network as Docker to allow communication between them. If they are on different networks they will not be able to communicate.
+
+```js
+brokers: ["172.18.0.1:9092"], // for internal docker network
+brokers: ["host.docker.internal:9094"], // special hostname that resolves
+// to the IP address of the host machine (host) when used inside a Docker container
+```
+
+#### Ping and Telnet commands
+
+The `ping` command is a widely used command-line tool for testing network connectivity between a source device and a destination device. The command sends Internet Control Message Protocol (ICMP) Echo Request packets to the destination and waits for ICMP Echo Reply responses. Upon receiving responses, the `ping` command displays information about latency, packet loss and other statistics related to the communication with the destination.
+
+```shell
+ping 172.18.0.1
+```
+
+When executing the `ping 172.18.0.1` command and receiving responses from the sent packets, it indicates that the IP address 172.18.0.1 is up and responding to ICMP packets.
+
+However, the `ping` command does not support specifying a port directly. The correct format to use `ping` is with just the IP address or domain name, without specifying a port.
+
+To check if a specific port is open and reachable on a given IP address, you can use other tools like `telnet` or port checking utilities like `nmap`.
+
+Example of using `telnet` to check a port:
+
+``` shell
+telnet <IP address> <port>
+```
+
+For example, to verify that port 27017 is reachable from IP address 172.18.0.1, you could run the following command:
+
+``` shell
+>> telnet 172.18.0.1 27017
+```
+
+If the port is open and reachable, you will see a success message or proper response from the service or application running on that port. Otherwise, you will get an error message or the command will wait for the connection for a period of time and eventually time out.
+
+Be sure to use the correct format when using commands such as `ping` and `telnet` to verify connectivity and port opening on a specific IP address.
+
+``` shell
+>> telnet 0.0.0.0 3000
+Trying 0.0.0.0...
+telnet: Unable to connect to remote host: Connection refused
+```
+
 ![screen](/home-broker.png)
 
 <p align="center">Project made with :blue_heart: by <a href="https://github.com/stardusteight-d4c">Gabriel Sena</a></p>
 
-
-
-
-
-
-
-
-
--> Watch do MongoDB
--> Observable
-
-
-quando você faz uma requisição via localhost dentro de um container,
-você está fazendo uma requisição no contexto daquele container
-
-se você ter uma porta exposta em localhost mas o processo estiver
-rodando na sua máquina ou em outro container, apenas sua máquina 
-ou aquele container terá acesso à esse endereço,
-
-por isso devemos configurar networks ou extra_hosts para a comunicação
-entre containers acontecer
-
-
-
-
-Obs.: Isso só é aplicado para códigos via backend/server caso seja uma requisição 
-executada no browser não terá efeito
-
-// executando npm run prisma-generate e rodando o servidor com npm run start:dev 
-// dentro do container app, estava recebendo o erro:
-
-// PrismaClientInitializationError: Unable to require
-// (`/home/node/app/node_modules/.prisma/client/libquery_engine-debian-openssl-1.1.x.so.node`).
-// Prisma cannot find the required `libssl` system library in your system. 
-// Please install openssl and try again.
-
-<!-- talvez seja necessario excluir a diretório dist -->
-
-// SET -> binaryTargets = ["native", "debian-openssl-1.1.x"]
-// In generator client {}
-
-// server sent events -> servidor enviar eventos para o browser (http)
-// websockets -> servidor enviar eventos para o browser (ws)
-
-// CLIENT ---- GET /events ---- SERVER
-// SERVER ---- Header (conexão de longa duração, o browser não fecha a conexão)
-
-// Limitações
-// http - aba (dominio) -  6 conexões simultaneas
-// http2 - aba (dominio) -  100 conexões simultaneas
-
-header: Connection: keep-alive
-header: Cache-Control: no-cache
-
-
-// brokers: ["172.18.0.1:9092"], // for internal docker network
-// brokers: ["host.docker.internal:9094"], // special hostname that resolves
-// to the IP address of the host machine (host) when used inside a Docker container
-
-A função handleWalletAssetChanged é responsável por lidar com a mudança nos ativos de carteira e notificar o observer com os dados atualizados. Aqui está uma descrição passo a passo do que a função faz:
-
-
-// PING command para verificar se um endereço está ativo
-
- ping 172.18.0.3:27017
-
- O comando `ping` é utilizado para enviar pacotes ICMP e verificar a conectividade com um endereço IP. No seu exemplo, você executou o comando `ping 172.18.0.1` e recebeu respostas dos pacotes enviados, o que indica que o endereço IP 172.18.0.1 está ativo e respondendo aos pacotes ICMP.
-
-No entanto, o comando `ping` não suporta especificar uma porta diretamente. O formato correto para utilizar o `ping` é apenas com o endereço IP ou nome de domínio, sem especificar uma porta.
-
-Para verificar se uma porta específica está aberta e acessível em um determinado endereço IP, você pode usar outras ferramentas, como o `telnet` ou utilitários de verificação de porta, como o `nmap`.
-
-Exemplo de uso do `telnet` para verificar uma porta:
-
-```shell
-telnet <endereço IP> <porta>
-```
-
-Por exemplo, para verificar se a porta 27017 está acessível no endereço IP 172.18.0.1, você pode executar o seguinte comando:
-
-```shell
-telnet 172.18.0.1 27017
-```
-
-Se a porta estiver aberta e acessível, você verá uma mensagem de sucesso ou uma resposta adequada do serviço ou aplicação que estiver sendo executada nessa porta. Caso contrário, você receberá uma mensagem de erro ou o comando ficará aguardando a conexão por um período de tempo e, eventualmente, expirará.
-
-Certifique-se de usar o formato correto ao utilizar comandos como `ping` e `telnet` para verificar a conectividade e a abertura de portas em um endereço IP específico.
-
-fixing Unable to connect to the database. Retrying
-with directConnection=true
-
-explicar control center http://localhost:9021/
-
-erro kafka.upstash.io "This server does not host this topic-partition"
-Você precisa criar os tópicos no upstash antes de tentar conectar com eles
-
-explicar a importância de um serviço de mensageria Microservices: Quando utilizar? Vantagens e Desvantagens + Abertura das matrículas 40:00
-
-
-O erro "Hydration failed because the initial UI does not match what was rendered on the server" ocorre quando há uma inconsistência entre o conteúdo renderizado inicialmente no servidor e o que está sendo hidratado no lado do cliente durante a inicialização do React.
-
-/**
-  * The rest who must validate these transactions and actually carry out the changes
-  * and sync the data with this API server to the frontend with the trade-service
-  * a service made in GO where the business logic and transaction calculations are
-  * Kafka messaging service, so we maintain communication between systems where both
-  * are reading and publishing messages, and in the case of this server, sending updates
-  * via Server Sent Events to the web client. 
-  */
