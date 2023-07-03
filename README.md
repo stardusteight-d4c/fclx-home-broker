@@ -120,11 +120,11 @@ In short, Vercel's SWR (stale-while-revalidate) library offers an efficient solu
 
 ### Understanding the domain
 
-- <strong>Order</strong>: A purchase order, often abbreviated to PO (Purchase Order), is a commercial document issued by a buyer to a seller, indicating types, quantities and agreed prices for required products or services. It is used to control the purchase of products and services from external suppliers
-
  - <strong>Asset</strong>: It is the set of all investments, whether made by individuals or legal entities. These investments can increase in value over time and generate returns on the capital invested at the beginning.
  
  - <strong>Wallet</strong>: The investment portfolio is a union of all the applications you have chosen to make your money yield.
+
+- <strong>Order</strong>: A purchase order, often abbreviated to PO (Purchase Order), is a commercial document issued by a buyer to a seller, indicating types, quantities and agreed prices for required products or services. It is used to control the purchase of products and services from external suppliers
 
 - <strong>Transaction</strong>: It involves the `creation of a purchase or sale order of a certain financial asset`. The buy or sell order is recorded with details such as the asset identifier, the investor's portfolio identifier, the price, the number of shares and the type of transaction (buy or sell). These transactions are processed by the system to execute the asset purchase or sale operations, updating portfolio information and registering the status of the order (such as "PENDING" or "CLOSED").
 
@@ -196,9 +196,106 @@ transaction performed:  {
 }
 ```
 
+### Watch Database and Observable Instance (rxjs library) 
 
+1. The `subscribeAssetDailyEvents` function is responsible for subscribing to the daily events of a specific asset. It takes the asset ID as a parameter.
 
+2. Inside the function, the `subscribeAssetDailyEvents` method of the assetService service is called. This method returns an `Observable` that emits events related to the asset's daily events.
 
+3. The `Observable` returned by `assetService.subscribeAssetDailyEvents` is then mapped using the map function. This allows the format of the event to be transformed into the format expected by the subscribeAssetDailyEvents function. The event originally emitted by the service contains an event field and a data field, while the subscribeAssetDailyEvents function expects an object with a type field and a data field.
+
+4. The `subscribeAssetDailyEvents` function returns the resulting Observable after the transformation.
+
+```ts
+// server/src/controllers/asset.controller.ts
+
+@Sse("daily/events")
+  public subscribeAssetDailyEvents(
+    @Param("id") id: string
+  ): Observable<MessageEvent> {
+    return this.assetService.subscribeAssetDailyEvents(id).pipe(
+      map((event) => ({
+        type: event.event,
+        data: event.data,
+      }))
+    );
+  }
+}
+```
+
+*The `pipe` method of the `Observable` is used to chain operators that manipulate the values ​​emitted by the original Observable. It allows you to add transformations, filtering, blending or other operations to emitted values ​​before they are delivered to observers.*
+
+```ts
+// server/src/services/asset.service.ts
+
+public subscribeAssetDailyEvents(asset_id: string): Observable<{
+  event: "asset-daily-created";
+  data: AssetDaily;
+}> {
+  return new Observable((observer) => {
+    this.assetDailyModel
+      .watch(getInsertPipeline(asset_id), fullDocumentUpdateLookup)
+      .on("change", async (data) =>
+        this.#handler.handleAssetDailyCreated({
+          changedData: data,
+          observer,
+        })
+      );
+  });
+}
+```
+
+5. The `watch` method is functionality provided by the database, in this case, to watch for changes in a given set of data.
+
+6. It takes an `aggregation pipeline` (in this case, getInsertPipeline(asset_id)) and a full document update function (like `fullDocumentUpdateLookup`) as arguments.
+
+7. When changes occur to the data that match the aggregation pipeline, the `change` event is triggered.
+
+```ts
+// server/src/services/@helpers/asset.handler.ts
+
+public async handleAssetDailyCreated(request: {
+    changedData: any;
+    observer: Subscriber<{
+      event: "asset-daily-created";
+      data: AssetDaily;
+    }>;
+  }) {
+    const asset = await this.#prismaService.assetDaily.findUnique({
+      where: {
+        id: request.changedData.fullDocument._id + "",
+      },
+    });
+    request.observer.next({ event: "asset-daily-created", data: asset });
+  }
+```
+
+8. Within the `change` event handler, the `handleAssetDailyCreated` function is called. This function is responsible for processing changes to the data and notifying the `Observer` with the `asset-daily-created` event and associated data.
+
+#### Observable      
+An observable is an object that emits events (or values) over time and allows other observers to subscribe to receive those events.
+
+In the context of the presented code, the observable is used to create a communication channel between the database service (which emits the events) and the observers that are interested in these changes.
+
+When a change occurs in the observed data (in this case, changes in the asset's daily events), the observable notifies the subscribed observers, sending the event and associated data.
+
+Observers can subscribe to the observable using the `subscribe` method. When subscribing, they provide callback functions to handle the events emitted by the observable.
+
+In the provided example, the `subscribeAssetDailyEvents` function returns the observable that emits events related to the asset's daily events. These events are processed and transformed before being emitted to interested observers.
+
+#### Watch
+
+In short, the "watch" feature of the database allows you to observe changes in data in real time. The observable acts as a communication channel between the database service (the event sender) and the observers interested in these changes. It allows observers to subscribe to receive events emitted by the database when observed data changes.
+
+The "watch" feature is a feature offered by some databases, such as MongoDB, that allows developers to watch data changes in real time. Instead of having to periodically query the database for updates.
+
+By using the "watch" feature, you can monitor a specific dataset and be notified of insert, update, or delete events that occur on that data. These events are emitted by the database and can be captured and processed by your code.
+
+By using "watch" in conjunction with observables from the Observer pattern, you can create asynchronous and reactive communication between the database and your application. Watchers subscribe to events emitted by the "watch" and can take actions based on these changes, such as updating the user interface, processing modified data, or making business decisions.
+
+This combination of the "watch" feature and observables allows your application to be notified in real time of data changes, rather than having to constantly query the database. This improves efficiency, reduces latency, and allows your application to respond immediately to changes in observed data.
+
+In summary, the database "watch" feature, when used in conjunction with observables, provides an efficient and reactive way to observe data changes in real time, allowing your application to be asynchronously notified of these changes and take appropriate actions.
 
 ![screen](/home-broker.png)
 
@@ -210,12 +307,11 @@ transaction performed:  {
 
 
 
--> Falar sober Kafka
--> Microserviços
--> Server sent events
+
+
 -> Watch do MongoDB
 -> Observable
--> explicar componente SyncOrders
+
 
 quando você faz uma requisição via localhost dentro de um container,
 você está fazendo uma requisição no contexto daquele container
@@ -227,9 +323,7 @@ ou aquele container terá acesso à esse endereço,
 por isso devemos configurar networks ou extra_hosts para a comunicação
 entre containers acontecer
 
-Fazer um script de exemplo/testes para demonstrar como todos os componentes se comunicam e a responsabilidade de cada um.
 
-Também comentar o processo
 
 
 Obs.: Isso só é aplicado para códigos via backend/server caso seja uma requisição 
