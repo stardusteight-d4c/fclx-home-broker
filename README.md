@@ -118,13 +118,89 @@ In short, Vercel's SWR (stale-while-revalidate) library offers an efficient solu
 
 ## :speech_balloon: Explanations
 
-### Philosophy vs. Object Oriented Programming
+### Understanding the domain
+
+- <strong>Order</strong>: A purchase order, often abbreviated to PO (Purchase Order), is a commercial document issued by a buyer to a seller, indicating types, quantities and agreed prices for required products or services. It is used to control the purchase of products and services from external suppliers
+
+ - <strong>Asset</strong>: It is the set of all investments, whether made by individuals or legal entities. These investments can increase in value over time and generate returns on the capital invested at the beginning.
+ 
+ - <strong>Wallet</strong>: The investment portfolio is a union of all the applications you have chosen to make your money yield.
+
+- <strong>Transaction</strong>: It involves the `creation of a purchase or sale order of a certain financial asset`. The buy or sell order is recorded with details such as the asset identifier, the investor's portfolio identifier, the price, the number of shares and the type of transaction (buy or sell). These transactions are processed by the system to execute the asset purchase or sale operations, updating portfolio information and registering the status of the order (such as "PENDING" or "CLOSED").
+
+```js
+// kafka messages (input topic)
+
+{
+  "order_id": "1",
+  "investor_id": "Celia",
+  "asset_id": "asset1",
+  "current_shares": 0,
+  "shares": 5,
+  "price": 5.0,
+  "order_type": "BUY"
+}
+
+{
+  "order_id": "1",
+  "investor_id": "Mari",
+  "asset_id": "asset1",
+  "current_shares": 10,
+  "shares": 5,
+  "price": 5.0,
+  "order_type": "SELL"
+}
+
+// kafka messages (output topic)
+
+// sales order transaction
+transaction performed:  {
+  "order_id": "1",
+  "investor_id": "Mari",
+  "asset_id": "asset1",
+  "order_type": "SELL",
+  "status": "CLOSED",
+  "partial": 0,
+  "shares": 5,
+  "transactions": [
+    {
+      "transaction_id": "6fe28de3-8069-41a1-b62a-616b6aa766c3",
+      "buyer_id": "1",
+      "seller_id": "1",
+      "asset_id": "asset1",
+      "price": 5,
+      "shares": 5
+    }
+  ]
+}
+
+// purchase order transaction
+transaction performed:  {
+  "order_id": "1",
+  "investor_id": "Celia",
+  "asset_id": "asset1",
+  "order_type": "BUY",
+  "status": "CLOSED",
+  "partial": 0,
+  "shares": 5,
+  "transactions": [
+    {
+      "transaction_id": "6fe28de3-8069-41a1-b62a-616b6aa766c3",
+      "buyer_id": "1",
+      "seller_id": "1",
+      "asset_id": "asset1",
+      "price": 5,
+      "shares": 5
+    }
+  ]
+}
+```
 
 
 
-![screen](/screens/home-broker.png)
 
 
+![screen](/home-broker.png)
 
 <p align="center">Project made with :blue_heart: by <a href="https://github.com/stardusteight-d4c">Gabriel Sena</a></p>
 
@@ -191,21 +267,6 @@ header: Cache-Control: no-cache
 // to the IP address of the host machine (host) when used inside a Docker container
 
 A função handleWalletAssetChanged é responsável por lidar com a mudança nos ativos de carteira e notificar o observer com os dados atualizados. Aqui está uma descrição passo a passo do que a função faz:
-
-entendendo o dominio 
-
-## Order
-
-Uma ordem de compra, muitas vezes abreviada para PO (Purchase Order), é um documento comercial emitido por um comprador para um vendedor, indicando tipos, quantidades e preços acordados para produtos ou serviços necessários. É utilizado para controlar a compra de produtos e serviços de fornecedores externos
-
-## Asset
-
-É o conjunto de todos os investimentos, sejam eles feitos por pessoa física ou jurídica. Esses investimentos podem se valorizar com o passar do tempo e gerar rentabilidade sobre o capital investido no inicio.
-
-## Wallet
-
-A carteira de investimentos é uma união de todas as aplicações que você escolheu para fazer seu dinheiro render. 
-
 
 
 // PING command para verificar se um endereço está ativo
