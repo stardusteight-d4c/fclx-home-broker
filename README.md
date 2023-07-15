@@ -3,7 +3,7 @@
 </div>
 
 <h1 align="center">
- Full Cycle Learning Experience, Home Broker and Trade Service
+ Full Cycle Learning Experience, Home Broker
 </h1>
 
 A Homebroker is an asset trading platform that allows users to buy and sell stocks, bonds and other financial instruments quickly and conveniently. The application is built using modern technologies and follows an event-driven architecture.
